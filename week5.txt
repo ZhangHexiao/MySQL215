@@ -1,0 +1,717 @@
+Nov 1, 2017 -- Fall is here 
+-------------
+Week 5
+
+Subqueries
+----
+
+Q51. Display the employees whose job id is the same as the employee whose id is 141.
+
+
+Step 1.
+
+mysql> Select job_id
+    -> from employees
+    -> where employee_id = 141;
++----------+
+| job_id   |
++----------+
+| ST_CLERK |
++----------+
+1 row in set (0.00 sec)
+
+mysql> Select last_name Name, Job_id
+    -> From employees
+    -> where job_id = (Select job_id
+    ->                 from employees
+    ->                 where employee_id = 141);
++--------+----------+
+| Name   | Job_id   |
++--------+----------+
+| Rajs   | ST_CLERK |
+| Davies | ST_CLERK |
+| Matos  | ST_CLERK |
+| Vargas | ST_CLERK |
++--------+----------+
+4 rows in set (0.01 sec)
+
+mysql> Select last_name Name, Job_id, employee_id Id
+    -> From employees
+    -> where job_id = (Select job_id
+    ->                 from employees
+    ->                 where employee_id = 141);
++--------+----------+-----+
+| Name   | Job_id   | Id  |
++--------+----------+-----+
+| Rajs   | ST_CLERK | 141 |
+| Davies | ST_CLERK | 142 |
+| Matos  | ST_CLERK | 143 |
+| Vargas | ST_CLERK | 144 |
++--------+----------+-----+
+4 rows in set (0.00 sec)
+
+Final Answer
+
+mysql> Select last_name Name, Job_id, employee_id Id
+    -> From employees
+    -> where job_id = (Select job_id
+    ->                 from employees
+    ->                 where employee_id = 141)
+    -> AND Employee_id <> 141;
++--------+----------+-----+
+| Name   | Job_id   | Id  |
++--------+----------+-----+
+| Davies | ST_CLERK | 142 |
+| Matos  | ST_CLERK | 143 |
+| Vargas | ST_CLERK | 144 |
++--------+----------+-----+
+3 rows in set (0.06 sec)
+
+
+Q52. Display the last name and salary of every employee that reports to King.
+
+
+Step 1.
+
+mysql> Select employee_id
+    -> from employees
+    -> where last_name = 'King';
++-------------+
+| employee_id |
++-------------+
+|         100 |
++-------------+
+1 row in set (0.02 sec)
+
+Final Answer
+
+mysql> Select last_name Name, Salary, Manager_Id Manager
+    -> From employees
+    -> where manager_id = (Select employee_id
+    ->                     from employees
+    ->                     where last_name = 'King');
++-----------+----------+---------+
+| Name      | Salary   | Manager |
++-----------+----------+---------+
+| Kochhar   | 17000.00 |     100 |
+| Mourgos   |  5800.00 |     100 |
+| Zlotkey   | 10500.00 |     100 |
+| Hartstein | 13000.00 |     100 |
++-----------+----------+---------+
+4 rows in set (0.02 sec)
+
+
+~~~Q53. Display the department number, employee last name, and job id of every employee in the Executive department.
+
+
+mysql> desc departments;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| Department_Id   | decimal(4,0) | NO   | PRI | NULL    |       |
+| Department_Name | varchar(30)  | NO   |     | NULL    |       |
+| Manager_Id      | decimal(6,0) | YES  |     | NULL    |       |
+| Location_Id     | decimal(4,0) | YES  | MUL | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+4 rows in set (0.06 sec)
+
+
+
+Step 1.
+
+
+mysql> Select department_id
+    -> from departments
+    -> where department_name = 'Executive';
++---------------+
+| department_id |
++---------------+
+|            90 |
++---------------+
+1 row in set (0.03 sec)
+
+
+
+
+Final Answer
+
+
+
+mysql> Select Last_name Name, Job_id Job, Department_id Department
+    -> From employees
+    -> where department_id = (Select department_id
+    ->                        from departments
+    ->                        where department_name = 'Executive');
++---------+---------+------------+
+| Name    | Job     | Department |
++---------+---------+------------+
+| King    | AD_PRES |         90 |
+| Kochhar | AD_VP   |         90 |
++---------+---------+------------+
+2 rows in set (0.01 sec)
+
+Standard Syntax
+
+
+mysql> Select e.Last_name Name, e.Job_id Job, d.Department_id Department
+    -> From employees e, departments d 
+    -> Where e.department_id = d.department_id
+    ->       AND d.department_name = 'Executive';
++---------+---------+------------+
+| Name    | Job     | Department |
++---------+---------+------------+
+| King    | AD_PRES |         90 |
+| Kochhar | AD_VP   |         90 |
++---------+---------+------------+
+2 rows in set (0.02 sec)
+
+
+
+Standard Syntax
+
+
+mysql> Select e.Last_name Name, e.Job_id Job, d.Department_id Department
+    -> From employees e, departments d 
+    -> Where e.department_id = d.department_id
+    ->       AND d.department_name = 'Executive';
++---------+---------+------------+
+| Name    | Job     | Department |
++---------+---------+------------+
+| King    | AD_PRES |         90 |
+| Kochhar | AD_VP   |         90 |
++---------+---------+------------+
+2 rows in set (0.02 sec)
+
+
+
+Syntax 1999
+
+
+mysql> Select e.Last_name Name, e.Job_id Job, d.Department_id Department
+    -> From employees e INNER JOIN departments d 
+    ->      ON e.department_id = d.department_id
+    -> Where d.department_name = 'Executive';
++---------+---------+------------+
+| Name    | Job     | Department |
++---------+---------+------------+
+| King    | AD_PRES |         90 |
+| Kochhar | AD_VP   |         90 |
++---------+---------+------------+
+
+
+2 rows in set (0.02 sec)
+
+
+
+
+
+
+Q54. Display the names of employees that do not have any subordinates.
+
+1. See who is a manager
+
+
+mysql> Select manager_id
+    -> from employees;
++------------+
+| manager_id |
++------------+
+|       NULL |
+|        100 |
+|        102 |
+|        103 |
+|        103 |
+|        100 |
+|        124 |
+|        124 |
+|        124 |
+|        124 |
+|        100 |
+|        149 |
+|        149 |
+|        149 |
+|        101 |
+|        100 |
+|        201 |
+|        101 |
+|        205 |
++------------+
+19 rows in set (0.00 sec)
+
+
+Remove Null values 
+
+
+mysql> Select manager_id
+    -> from employees
+    -> Where manager_id is not null;
++------------+
+| manager_id |
++------------+
+|        100 |
+|        102 |
+|        103 |
+|        103 |
+|        100 |
+|        124 |
+|        124 |
+|        124 |
+|        124 |
+|        100 |
+|        149 |
+|        149 |
+|        149 |
+|        101 |
+|        100 |
+|        201 |
+|        101 |
+|        205 |
++------------+
+18 rows in set (0.00 sec)
+
+Remove duplications
+
+mysql> Select distinct manager_id
+    -> from employees
+    -> Where manager_id is not null;
+
+mysql> Select last_name Name
+    -> from employees
+    -> where employee_id NOT IN (Select manager_id
+    ->                           from employees
+    ->                           Where manager_id is not null);
++---------+
+| Name    |
++---------+
+| Ernst   |
+| Lorentz |
+| Rajs    |
+| Davies  |
+| Matos   |
+| Vargas  |
+| Abel    |
+| Taylor  |
+| Grant   |
+| Whalen  |
+| Fay     |
+| Gietz   |
++---------+
+12 rows in set (0.03 sec)
+
+
+
+
+See results if Null values are not removed
+
+mysql> Select last_name Name
+    -> from employees
+    -> where employee_id NOT IN (Select manager_id
+    ->                           from employees);
+Empty set (0.00 sec)
+
+
+
+
+
+~~*~Q55. Find the last names of employees that earn more than Matos.
+
+
+
+
+Step 1.
+
+
+mysql> Select salary
+    -> from employees
+    -> where last_name = 'Matos';
++---------+
+| salary  |
++---------+
+| 2600.00 |
++---------+
+1 row in set (0.00 sec)
+
+
+
+
+Final Answer
+
+mysql> Select last_name Name
+    -> from employees
+    -> where salary >  (Select salary
+    ->                  from employees
+    ->                  where last_name = 'Matos');
++-----------+
+| Name      |
++-----------+
+| King      |
+| Kochhar   |
+| Hunold    |
+| Ernst     |
+| Lorentz   |
+| Mourgos   |
+| Rajs      |
+| Davies    |
+| Zlotkey   |
+| Abel      |
+| Taylor    |
+| Grant     |
+| Whalen    |
+| Hartstein |
+| Fay       |
+| Higgins   |
+| Gietz     |
++-----------+
+17 rows in set (0.00 sec)
+
+
+
+Q56. Display the last name, salary, and job id of all employees that their salary is less than any of the salaries of employees with job id SA_REP.
+
+
+
+
+mysql> Select salary
+    -> from employees
+    -> where job_id = 'SA_REP';
++----------+
+| salary   |
++----------+
+| 11000.00 |
+|  8600.00 |
+|  7000.00 |
++----------+
+3 rows in set (0.00 sec)
+
+
+mysql> Select last_name Name, salary, job_id
+    -> From employees
+    -> where salary < ANY  (Select salary
+    ->                      from employees
+    ->                      where job_id = 'SA_REP');
++---------+----------+------------+
+| Name    | salary   | job_id     |
++---------+----------+------------+
+| Hunold  |  9000.00 | IT_PROG    |
+| Ernst   |  6000.00 | IT_PROG    |
+| Lorentz |  4200.00 | IT_PROG    |
+| Mourgos |  5800.00 | ST_MAN     |
+| Rajs    |  3500.00 | ST_CLERK   |
+| Davies  |  3100.00 | ST_CLERK   |
+| Matos   |  2600.00 | ST_CLERK   |
+| Vargas  |  2500.00 | ST_CLERK   |
+| Zlotkey | 10500.00 | SA_MAN     |
+| Taylor  |  8600.00 | SA_REP     |
+| Grant   |  7000.00 | SA_REP     |
+| Whalen  |  4400.00 | AD_ASST    |
+| Fay     |  6000.00 | MK_REP     |
+| Gietz   |  8300.00 | AC_ACCOUNT |
++---------+----------+------------+
+14 rows in set (0.03 sec)
+
+Final Answer
+
+
+mysql> Select last_name Name, salary, job_id
+    -> From employees
+    -> where salary < ANY  (Select salary
+    ->                      from employees
+    ->                      where job_id = 'SA_REP')
+    -> AND job_id <> 'SA_REP';
++---------+----------+------------+
+| Name    | salary   | job_id     |
++---------+----------+------------+
+| Hunold  |  9000.00 | IT_PROG    |
+| Ernst   |  6000.00 | IT_PROG    |
+| Lorentz |  4200.00 | IT_PROG    |
+| Mourgos |  5800.00 | ST_MAN     |
+| Rajs    |  3500.00 | ST_CLERK   |
+| Davies  |  3100.00 | ST_CLERK   |
+| Matos   |  2600.00 | ST_CLERK   |
+| Vargas  |  2500.00 | ST_CLERK   |
+| Zlotkey | 10500.00 | SA_MAN     |
+| Whalen  |  4400.00 | AD_ASST    |
+| Fay     |  6000.00 | MK_REP     |
+| Gietz   |  8300.00 | AC_ACCOUNT |
++---------+----------+------------+
+12 rows in set (0.00 sec)
+
+~~~Q57. Display the names of employees that are managers.
+
+
+
+
+Step 1.
+
+
+mysql> Select manager_id
+    -> From employees
+    -> where manager_id IS NOT NULL;
++------------+
+| manager_id |
++------------+
+|        100 |
+|        102 |
+|        103 |
+|        103 |
+|        100 |
+|        124 |
+|        124 |
+|        124 |
+|        124 |
+|        100 |
+|        149 |
+|        149 |
+|        149 |
+|        101 |
+|        100 |
+|        201 |
+|        101 |
+|        205 |
++------------+
+18 rows in set (0.00 sec)
+
+
+
+Remove duplications
+
+
+mysql> Select distinct manager_id
+    -> From employees
+    -> where manager_id IS NOT NULL;
++------------+
+| manager_id |
++------------+
+|        100 |
+|        102 |
+|        103 |
+|        124 |
+|        149 |
+|        101 |
+|        201 |
+|        205 |
++------------+
+8 rows in set (0.02 sec)
+
+Final Answer.
+
+
+
+mysql> Select last_name "Manager Name"
+    -> from employees
+    -> where employee_id IN (Select distinct manager_id
+    ->                      From employees
+    ->                      where manager_id IS NOT NULL);
++--------------+
+| Manager Name |
++--------------+
+| King         |
+| Hunold       |
+| Mourgos      |
+| Zlotkey      |
+| Kochhar      |
+| Hartstein    |
+| Higgins      |
++--------------+
+7 rows in set (0.00 sec)
+
+
+
+
+~~~Q58. How many employees work for the Marketing department?
+
+
+mysql> Select count(employee_id) “Number of Employees”
+    -> from employees
+    -> where department_id = (Select department_id
+    ->                        from departments
+    ->                        Where Department_name = ‘Executive’);
+
+
+Q59. Display the country name where Matos works.
+
+
+
+Step 1.
+
+mysql> Select department_id
+    -> from employees
+    -> Where last_name = 'Matos';
++---------------+
+| department_id |
++---------------+
+|            50 |
++---------------+
+1 row in set (0.00 sec)
+
+
+
+Step 2.
+
+
+mysql> Select location_id 
+    -> from departments
+    -> where department_id = (Select department_id
+    ->                        from employees
+    ->                        Where last_name = 'Matos');
++-------------+
+| location_id |
++-------------+
+|        1500 |
++-------------+
+1 row in set (0.00 sec)
+
+
+
+Step 3. Final Answer
+
+
+mysql> Select country_name Country
+    -> from countries
+    -> where country_id = (Select country_id
+    ->                     From locations
+    ->                     where location_id = (Select location_id 
+    ->                                          from departments
+    ->                                          where department_id = (Select department_id
+    ->                                                                 from employees
+    ->                                                                 Where last_name = 'Matos')));
++--------------------------+
+| Country                  |
++--------------------------+
+| United States of America |
++--------------------------+
+1 row in set (0.05 sec)
+
+
+
+
+Q60. Display the names and id of employees that held previous positions in the company.
+
+
+
+
+Step 1.
+
+mysql> Select employee_id
+    -> from job_history;
++-------------+
+| employee_id |
++-------------+
+|         200 |
+|         102 |
+|         101 |
+|         101 |
+|         201 |
+|         114 |
+|         122 |
+|         200 |
+|         176 |
+|         176 |
++-------------+
+10 rows in set (0.02 sec)
+
+
+
+
+Remove duplications
+
+
+mysql> Select distinct employee_id
+    -> from job_history;
++-------------+
+| employee_id |
++-------------+
+|         200 |
+|         102 |
+|         101 |
+|         201 |
+|         114 |
+|         122 |
+|         176 |
++-------------+
+7 rows in set (0.00 sec)
+
+
+
+Final Answer.
+
+
+mysql> Select last_name Name, employee_id Id
+    -> from employees
+    -> where employee_id IN (Select distinct employee_id
+    ->                       from job_history);
++-----------+-----+
+| Name      | Id  |
++-----------+-----+
+| Whalen    | 200 |
+| Kochhar   | 101 |
+| Hartstein | 201 |
+| Taylor    | 176 |
++-----------+-----+
+4 rows in set (0.00 sec)
+
+mysql> exit;
+— — — — — — — — — — — — — —  End of file  - - - - - - - - - - - - - - - - - - - -
+
+
+Extra Questions. 
+
+What is the salary range belonging to job id performed by King?
+
+a. using a subquery
+b. syntax 1999
+
+Select e.Job_Id Job, Concat(j.Min_Salary, ' < --- > ', j.Max_salary) "Salary Range"
+
+from jobs j JOIN employees e
+ 
+   on j.job_id = e.job_id
+ and e.last_name = 'king';
+
+Which countries don't have any department at the moment?
+
+a. syntax 1999
+
+
+
+Select c.country_name 
+
+from countries c 
+
+where c.country_id NOT IN (Select l.country_id
+                           from countries c Join Locations l
+
+                           on c.country_id = l.country_id);
+
+List department names that are located in Seattle
+
+a. using a subquery
+
+
+
+Select d.department_name
+
+from departments d 
+
+where d.location_id = (Select l.location_id
+ 
+                       From locations l
+                        where l.city = 'Seattle');
+
+b. standard syntax
+
+
+Select d.department_name
+
+from departments d, locations l 
+
+where d.location_id = l.location_id AND l.city ='Seattle';
+
+-------------------- -- -- - -- - -- --- ---- -- - -----  - -end of file -------------------- - -- -- --- ------ - -					   
+                            
+                      
+
+
+
+
+

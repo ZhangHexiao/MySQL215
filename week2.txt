@@ -1,0 +1,857 @@
+September 27, Last day of summer
+----
+
+Week 2
+
+Q7. Display the last names and salary of employees that earn more than 4000.
+
+
+mysql> Select last_name Name, salary
+    -> from employees
+    -> where salary > 4000;
++-----------+----------+
+| Name      | salary   |
++-----------+----------+
+| King      | 24000.00 |
+| Kochhar   | 17000.00 |
+| Hunold    |  9000.00 |
+| Ernst     |  6000.00 |
+| Lorentz   |  4200.00 |
+| Mourgos   |  5800.00 |
+| Zlotkey   | 10500.00 |
+| Abel      | 11000.00 |
+| Taylor    |  8600.00 |
+| Grant     |  7000.00 |
+| Whalen    |  4400.00 |
+| Hartstein | 13000.00 |
+| Fay       |  6000.00 |
+| Higgins   | 12000.00 |
+| Gietz     |  8300.00 |
++-----------+----------+
+15 rows in set (0.00 sec)
+
+
+Q7a. An example of a query that does not return any values.
+
+mysql> Select last_name Name, salary
+    -> from employees
+    -> where salary < 100;
+Empty set (0.02 sec)
+
+
+Q8. Display the names and salary of all employees earning between 6000 and 9000
+
+
+
+mysql> select last_name Name, salary
+    -> from employees
+    -> where salary > 6000 and salary < 9000;
++--------+---------+
+| Name   | salary  |
++--------+---------+
+| Taylor | 8600.00 |
+| Grant  | 7000.00 |
+| Gietz  | 8300.00 |
++--------+---------+
+3 rows in set (0.00 sec)
+
+
+Q8a. Now now using the BETWEEN operator
+
+
+mysql> select last_name Name, salary
+    -> from employees
+    -> where salary BETWEEN 6000 and 9000;
++--------+---------+
+| Name   | salary  |
++--------+---------+
+| Hunold | 9000.00 |
+| Ernst  | 6000.00 |
+| Taylor | 8600.00 |
+| Grant  | 7000.00 |
+| Fay    | 6000.00 |
+| Gietz  | 8300.00 |
++--------+---------+
+6 rows in set (0.00 sec)
+
+8b. Equivalent to 8a
+ 
+mysql> select last_name Name, salary
+    -> from employees
+    -> where salary >= 6000 and salary <= 9000;
++--------+---------+
+| Name   | salary  |
++--------+---------+
+| Hunold | 9000.00 |
+| Ernst  | 6000.00 |
+| Taylor | 8600.00 |
+| Grant  | 7000.00 |
+| Fay    | 6000.00 |
+| Gietz  | 8300.00 |
++--------+---------+
+6 rows in set (0.00 sec)
+
+
+Q9. Display the names of employees working for department 10 and department 60.
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  | MUL | NULL    |       |<——— See here
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+mysql> select last_name Name, department_id Department
+    -> from employees
+    -> where department_id = 10 OR department_id = 60;
++---------+------------+
+| Name    | Department |
++---------+------------+
+| Whalen  |         10 |
+| Hunold  |         60 |
+| Ernst   |         60 |
+| Lorentz |         60 |
++---------+------------+
+4 rows in set (0.02 sec)
+
+mysql> select last_name Name, department_id Department
+    -> from employees
+    -> where department_id IN (10,60);
++---------+------------+
+| Name    | Department |
++---------+------------+
+| Whalen  |         10 |
+| Hunold  |         60 |
+| Ernst   |         60 |
+| Lorentz |         60 |
++---------+------------+
+4 rows in set (0.00 sec)
+
+
+Q10. Display the names of employees that are not assigned to any department.
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  | MUL | NULL    |       |<——— see here
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+mysql> select last_name Name
+    -> from employees
+    -> where department_id IS NULL;
++-------+
+| Name  |
++-------+
+| Grant |
++-------+
+1 row in set (0.02 sec)
+
+
+Q11. Display the names of employees that are asiigned to departments as well as the departments that they are assigned to.
+
+mysql> select last_name Name, department_id "Assigned to"
+    -> from employees
+    -> where department_id IS NOT NULL;
++-----------+-------------+
+| Name      | Assigned to |
++-----------+-------------+
+| King      |          90 |
+| Kochhar   |          90 |
+| Hunold    |          60 |
+| Ernst     |          60 |
+| Lorentz   |          60 |
+| Mourgos   |          50 |
+| Rajs      |          50 |
+| Davies    |          50 |
+| Matos     |          50 |
+| Vargas    |          50 |
+| Zlotkey   |          80 |
+| Abel      |          80 |
+| Taylor    |          80 |
+| Whalen    |          10 |
+| Hartstein |          20 |
+| Fay       |          20 |
+| Higgins   |         110 |
+| Gietz     |         110 |
++-----------+-------------+
+18 rows in set (0.00 sec)
+
+mysql> select last_name Name, salary, salary * .2 Increase 
+    -> from employees 
+    -> where salary < 4000;
++--------+---------+----------+
+| Name   | salary  | Increase |
++--------+---------+----------+
+| Rajs   | 3500.00 |  700.000 |
+| Davies | 3100.00 |  620.000 |
+| Matos  | 2600.00 |  520.000 |
+| Vargas | 2500.00 |  500.000 |
++--------+---------+----------+
+4 rows in set (0.02 sec)
+
+
+===
+Calculated Fields
+
+Q12. Calculate a 20% salary increase to employees that earn less than 4000.
+Display last name, salary and salary increase.
+
+Q12a. Showing 2 decimal places
+
+mysql> select last_name Name, salary, format(salary * .2,2) Increase 
+    -> from employees 
+    -> where salary < 4000;
++--------+---------+----------+
+| Name   | salary  | Increase |
++--------+---------+----------+
+| Rajs   | 3500.00 | 700.00   |
+| Davies | 3100.00 | 620.00   |
+| Matos  | 2600.00 | 520.00   |
+| Vargas | 2500.00 | 500.00   |
++--------+---------+----------+
+4 rows in set (0.02 sec)
+
+Q12b. Showing a dollar sign 
+
+mysql> select last_name Name, salary, concat('$ ',format(salary * .2,2)) Increase 
+    -> from employees 
+    -> where salary < 4000;
++--------+---------+----------+
+| Name   | salary  | Increase |
++--------+---------+----------+
+| Rajs   | 3500.00 | $ 700.00 |
+| Davies | 3100.00 | $ 620.00 |
+| Matos  | 2600.00 | $ 520.00 |
+| Vargas | 2500.00 | $ 500.00 |
++--------+---------+----------+
+4 rows in set (0.00 sec)
+
+
+Q13. Same as Q12 but now show new salary.
+
+mysql> select last_name Name, salary, concat('$ ',format(salary * .2,2)) Increase, concat('$ ',format(salary * 1.2)) "New Salary"
+    -> from employees 
+    -> where salary < 4000;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')) "New Salary"
+from employees 
+where salary < 4000' at line 1
+
+
+Fixed the error ————
+
+mysql> select last_name Name, salary, concat('$ ',format(salary * .2,2)) Increase, concat('$ ',format(salary * 1.2,2)) "New Salary"
+    -> from employees 
+    -> where salary < 4000;
++--------+---------+----------+------------+
+| Name   | salary  | Increase | New Salary |
++--------+---------+----------+------------+
+| Rajs   | 3500.00 | $ 700.00 | $ 4,200.00 |
+| Davies | 3100.00 | $ 620.00 | $ 3,720.00 |
+| Matos  | 2600.00 | $ 520.00 | $ 3,120.00 |
+| Vargas | 2500.00 | $ 500.00 | $ 3,000.00 |
++--------+---------+----------+------------+
+4 rows in set (0.00 sec)
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |<— - -  see here
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  | MUL | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+
+Q14. Display the names of employees that got hired before 1999.
+
+mysql> select last_name Name, Hire_date 
+    -> from employees
+    -> where hire_date < '1999/1/1';
++-----------+------------+
+| Name      | Hire_date  |
++-----------+------------+
+| King      | 1987-06-17 |
+| Kochhar   | 1989-09-21 |
+| Hunold    | 1990-01-03 |
+| Ernst     | 1991-05-21 |
+| Rajs      | 1995-10-17 |
+| Davies    | 1997-01-29 |
+| Matos     | 1998-03-15 |
+| Vargas    | 1998-07-09 |
+| Abel      | 1996-05-11 |
+| Taylor    | 1998-03-24 |
+| Whalen    | 1987-09-17 |
+| Hartstein | 1996-02-17 |
+| Fay       | 1997-09-17 |
+| Higgins   | 1994-06-07 |
+| Gietz     | 1994-06-07 |
++-----------+------------+
+15 rows in set (0.00 sec)
+
+Q14a. Using the year() function.
+
+mysql> select last_name Name, Hire_date 
+    -> from employees
+    -> where year(hire_date) < '1999';
++-----------+------------+
+| Name      | Hire_date  |
++-----------+------------+
+| King      | 1987-06-17 |
+| Kochhar   | 1989-09-21 |
+| Hunold    | 1990-01-03 |
+| Ernst     | 1991-05-21 |
+| Rajs      | 1995-10-17 |
+| Davies    | 1997-01-29 |
+| Matos     | 1998-03-15 |
+| Vargas    | 1998-07-09 |
+| Abel      | 1996-05-11 |
+| Taylor    | 1998-03-24 |
+| Whalen    | 1987-09-17 |
+| Hartstein | 1996-02-17 |
+| Fay       | 1997-09-17 |
+| Higgins   | 1994-06-07 |
+| Gietz     | 1994-06-07 |
++-----------+------------+
+15 rows in set (0.00 sec)
+
+Q15. Display the names of employees that got hired after january 21, 2000
+
+mysql> select last_name Name, Hire_date 
+    -> from employees
+    -> where hire_date > '2000/1/21';
++---------+------------+
+| Name    | Hire_date  |
++---------+------------+
+| Zlotkey | 2000-01-29 |
++---------+------------+
+1 row in set (0.00 sec)
+
+
+Q16. Display the names of employees that got hired during the period of July 4, 1997 and July 4, 1999
+
+mysql> select last_name Name, Hire_date 
+    -> from employees
+    -> where hire_date Between '1997/7/4' AND '1999/7/4';
++---------+------------+
+| Name    | Hire_date  |
++---------+------------+
+| Lorentz | 1999-02-07 |
+| Matos   | 1998-03-15 |
+| Vargas  | 1998-07-09 |
+| Taylor  | 1998-03-24 |
+| Grant   | 1999-05-24 |
+| Fay     | 1997-09-17 |
++---------+------------+
+6 rows in set (0.00 sec)
+
+Q17. Who got hired on the month of May?
+
+mysql> select last_name Name, Hire_date 
+    -> from employees
+    -> where monthname(hire_date) = 'May';
++-------+------------+
+| Name  | Hire_date  |
++-------+------------+
+| Ernst | 1991-05-21 |
+| Abel  | 1996-05-11 |
+| Grant | 1999-05-24 |
++-------+------------+
+3 rows in set (0.03 sec)
+
+mysql> select last_name Name, Hire_date 
+    -> from employees
+    -> where month(hire_date) = 5;
++-------+------------+
+| Name  | Hire_date  |
++-------+------------+
+| Ernst | 1991-05-21 |
+| Abel  | 1996-05-11 |
+| Grant | 1999-05-24 |
++-------+------------+
+3 rows in set (0.00 sec)
+
+Q18. Who was hired on the 21st of the month?
+
+mysql> select last_name Name, Hire_date 
+    -> from employees
+    -> where dayofmonth(hire_date) = 21;
++---------+------------+
+| Name    | Hire_date  |
++---------+------------+
+| Kochhar | 1989-09-21 |
+| Ernst   | 1991-05-21 |
++---------+------------+
+2 rows in set (0.00 sec)
+
+
+=====
+Aggregation
+
+Aggregated functions Avg(), Min(), Max(), count(), sum()
+
+Q19. Display the salary average in the company.
+
+
+mysql> select avg(salary) "Average"
+    -> from employees;
++-------------+
+| Average     |
++-------------+
+| 8342.105263 |
++-------------+
+1 row in set (0.02 sec)
+
+
+Q20. Display the minimum salary in the company.
+
+mysql> select min(salary) "Minimum Salary"
+    -> from employees;
++----------------+
+| Minimum Salary |
++----------------+
+|        2500.00 |
++----------------+
+1 row in set (0.01 sec)
+
+Q21. Display the highest salary in the company.
+
+mysql> select max(salary) "Highest Salary"
+    -> from employees;
++----------------+
+| Highest Salary |
++----------------+
+|       24000.00 |
++----------------+
+1 row in set (0.00 sec)
+
+Q22. Display the total amount on salaries paid by the company.
+
+mysql> select sum(salary) "Total Amount"
+    -> from employees;
++--------------+
+| Total Amount |
++--------------+
+|    158500.00 |
++--------------+
+1 row in set (0.00 sec)
+
+Q23. How many employees work in the company?
+
+mysql> select count(*) "Number of Employees"
+    -> from employees;
++---------------------+
+| Number of Employees |
++---------------------+
+|                  19 |
++---------------------+
+1 row in set (0.00 sec)
+
+Q24. How many employees have been assigned to departments?
+
+mysql> select count(department_id) "Number of employees assigned"
+    -> from employees;
++------------------------------+
+| Number of employees assigned |
++------------------------------+
+|                           18 |
++------------------------------+
+1 row in set (0.00 sec)
+
+Q25. How many employees there are per department?
+
+Not final answer
+
+mysql> Select count(*) "Number of employees"
+    -> from employees
+    -> Group by department_id;
++---------------------+
+| Number of employees |
++---------------------+
+|                   1 |
+|                   1 |
+|                   2 |
+|                   5 |
+|                   3 |
+|                   3 |
+|                   2 |
+|                   2 |
++---------------------+
+8 rows in set (0.01 sec)
+
+Not final answer
+
+mysql> Select department_id Department,count(*) "Number of employees"
+    -> from employees
+    -> Group by department_id;
++------------+---------------------+
+| Department | Number of employees |
++------------+---------------------+
+|       NULL |                   1 |
+|         10 |                   1 |
+|         20 |                   2 |
+|         50 |                   5 |
+|         60 |                   3 |
+|         80 |                   3 |
+|         90 |                   2 |
+|        110 |                   2 |
++------------+---------------------+
+8 rows in set (0.00 sec)
+
+Final answer
+
+mysql> Select department_id Department,count(*) "Number of employees"
+    -> from employees
+    -> where department_id IS NOT NULL
+    -> Group by department_id;
++------------+---------------------+
+| Department | Number of employees |
++------------+---------------------+
+|         10 |                   1 |
+|         20 |                   2 |
+|         50 |                   5 |
+|         60 |                   3 |
+|         80 |                   3 |
+|         90 |                   2 |
+|        110 |                   2 |
++------------+---------------------+
+7 rows in set (0.00 sec)
+
+mysql> Select department_id Department,count(department_id) "Number of employees"
+    -> from employees
+    -> where department_id IS NOT NULL
+    -> Group by department_id;
++------------+---------------------+
+| Department | Number of employees |
++------------+---------------------+
+|         10 |                   1 |
+|         20 |                   2 |
+|         50 |                   5 |
+|         60 |                   3 |
+|         80 |                   3 |
+|         90 |                   2 |
+|        110 |                   2 |
++------------+---------------------+
+7 rows in set (0.00 sec)
+
+Final answer
+
+mysql> Select department_id Department,count(department_id) "Number of employees"
+    -> from employees
+    -> where department_id IS NOT NULL
+    -> Group by department_id
+    -> Order by 2;
++------------+---------------------+
+| Department | Number of employees |
++------------+---------------------+
+|         10 |                   1 |
+|         20 |                   2 |
+|         90 |                   2 |
+|        110 |                   2 |
+|         60 |                   3 |
+|         80 |                   3 |
+|         50 |                   5 |
++------------+---------------------+
+7 rows in set (0.03 sec)
+
+Q25a. Display inn descending order by number of employees.
+
+mysql> Select department_id Department,count(department_id) "Number of employees"
+    -> from employees
+    -> where department_id IS NOT NULL
+    -> Group by department_id
+    -> Order by 2 DESC;
++------------+---------------------+
+| Department | Number of employees |
++------------+---------------------+
+|         50 |                   5 |
+|         60 |                   3 |
+|         80 |                   3 |
+|         20 |                   2 |
+|         90 |                   2 |
+|        110 |                   2 |
+|         10 |                   1 |
++------------+---------------------+
+7 rows in set (0.00 sec)
+
+
+Q26. Display the department id of those departments that have more than 3 employees.
+
+
+mysql> Select department_id Department,count(department_id) "Number of employees"
+    -> from employees
+    -> where department_id IS NOT NULL
+    -> Group by department_id
+    -> Having count(department_id) > 3
+    -> Order by 1;
++------------+---------------------+
+| Department | Number of employees |
++------------+---------------------+
+|         50 |                   5 |
++------------+---------------------+
+1 row in set (0.00 sec)
+—————————  - - —  — - - — - - - - - - - - - -  End of questions ———  - - - - - - - - -
+
+Executing the script for assignment #1
+- - - - - - - - - - - - - - - - - - - - - - - - -
+
+mysql> Drop table books;
+ERROR 1051 (42S02): Unknown table 'hrwed.books'
+mysql> Create Table Books
+    -> (ISBN varchar(10) Primary key,
+    ->  Title varchar(80),
+    ->  Author varchar(60),
+    ->  Publisher varchar(60),
+    ->  PubDate date,
+    ->  Language varchar(20),
+    ->  Category varchar(25),
+    ->  PaperB varchar(1),
+    ->  PBsalePrice decimal(5.2),
+    ->  DigitF varchar(1),
+    ->  DigsalePrice decimal(5.2),
+    ->  NumPages integer);
+Query OK, 0 rows affected (0.30 sec)
+
+mysql> 
+mysql> 
+mysql> 
+mysql> 
+mysql> Insert Into Books
+    -> values(6071133483,'Ser Feliz Era Esto','Eduardo Sacheri', 'Alfaguara', '2015/3/17', 'Spanish','Fiction','P',15.25, 'D', 7.21, 248);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(6071127661,'La vida que Pensamos','Eduardo Sacheri', 'Alfaguara','2014/1/30','Spanish','Fiction','P',18.28, null, null, 540);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values('843231255X','El futbol a sol y sombra', 'Eduardo Galeano','Siglo XXI', '2006/1/11', 'Spanish','Fiction','P',16.95,null, null, 414);
+Query OK, 1 row affected, 1 warning (0.05 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(8432311456,'Las venas abiertas de America Latina', 'Eduardo Galeano','Siglo XXI', '2006/1/11', 'Spanish','Fiction','P',24.48,'D',7.05,380);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0307474720,'Cien años de Soledad','Gabriel Garcia Marquez','Vintage Español','2009/9/22','Spanish','Fiction','P',10.15,'D',10.57,496);
+Query OK, 1 row affected, 2 warnings (0.05 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0307387267,'El amor en los tiempos del colera','Gabriel Garcia Marquez','Vintage Español','2007/10/9','Spanish','Fiction','P',12.78,'D',11.38,464);
+Query OK, 1 row affected, 2 warnings (0.05 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0062511408,'El Alquimista', 'Paulo Coelho', 'Rayo','2002/1/22', 'Spanish','Fiction','P',8.46,'D',5.03,192);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values('607429223X', 'Once minutos','Paulo Coelho','Debolsillo','2012/8/10','Spanish','Fiction', 'P',8.46,null,null ,296);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0061829684, 'El vencedor esta solo','Paulo Coelho', 'Rayo','2010/8/31', 'Spanish','Fiction',null,null,'D',9.89,416);
+Query OK, 1 row affected, 1 warning (0.02 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0060883286,'One Hundred Years of Solitude','Gabriel Garcia Marquez','Harper Perennial Modern Classics','2009/8/31','English','Fiction','P',9.57,null,null,417);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0062315005,'The Alchemist', 'Paulo Coelho', 'HarperOne','2014/4/15', 'English','Fiction','P',16.98,'D',9.67,208);
+Query OK, 1 row affected, 2 warnings (0.02 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0853459916,'Open Veins of Latin America','Eduardo Galeano',' Monthly Review Press','1997/11/25','English','Politics','P',12.52,'D',7.05,317);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values('073607483X','Periodization Training:Theory and Methodology','Tudor Bompa','Human Kinetics', '2009/6/22', 'English','Sports','P',66.35,null, null, 424);
+Query OK, 1 row affected, 1 warning (0.02 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0736058036,'Essentials of strength training','Thomas R. Baechle & Roger W. Earle','Human Kinetics', '2008/6/2', 'English','Sports','P',42.41,null,null,656);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0736092269,'Strength Training Anatomy','Frédéric Delavier','Human Kinetics', '2010/3/9', 'English','Sports','P',11.35,null, null,192);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1450413994,'Core Training Anatomy','Frédéric Delavier','Human Kinetics', '2011/10/10', 'English','Sports',null,null,'D',14.92,144);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1591640253,'Soccer modern tactics','Alessandro Zauli','Reedswain Books & Videos','2002/8/1','English','Coaching',null,null,'D',7.03,128);
+Query OK, 1 row affected, 1 warning (0.02 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1890946737,'Teambuilding: the road to success','Rinus Michels','Reedswain Books & Videos','2002/8/1','English','Coaching','P',16.12,null,null,218);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1890946710, 'Attacking Soccer','Massimo Lucchesi','Reedswain Books & Videos','2001/12/1','English','Coaching',null,null,'D',7.19,224);
+Query OK, 1 row affected, 1 warning (0.01 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1890946036,'The Coaching Philosophies of Louis van Gaal and the Ajax Coaches','Henny Kormelink','Reedswain Books & Videos','2001/12/1','English','Coaching','P',12.65,'D',7.19,224);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(9896551979,'Jose Mourinho: Special Leadership','Luis Lourenco','Prime Books','2014/4/18','English','Sports','P',9.78,'D',7.15,164);
+Query OK, 1 row affected, 2 warnings (0.01 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1408843501,'The Manager','Mike Carson','Bloomsbury USA','2014/10/28','English','Sports','P',12.42,'D',7.05,320);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1409129462,'Pep Guardiola: Another Way of Winning', 'Guillem Balague','Orion Publishing','2013/12/1','English','Sports','P',17.06,'D',10.23,362);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1909430161,'I Think Therefore I Play','Andrea Pirlo','BackPage Press','2015/10/1','English','Sports','P',11.21,'D',5.64,200);
+Query OK, 1 row affected, 2 warnings (0.02 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1472224272,'Luis Suarez: Crossing the Line - My Story','Luis Suarez','Headline Book Publishing','2015/8/1','English','Sports','P',16.95,null,null,288);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1938591097,'The Flea - The Amazing Story of Leo Messi','Michael Part','Sole Books','2013/8/1','English','Sports','P',8.99,'D',4.24,160);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1845967100,'Red Men: Liverpool Football Club The Biography','John Williams',' Mainstream Publishing','2011/11/28','English','Sports','P',18.40,'D',14.08,317);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values('147221398X','Steven Gerrard: My Liverpool Story','Steven Gerrard','Headline Book Publishing','2015/4/1','English','Sports','P',18.68,'D',17.54,304);
+Query OK, 1 row affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(1780228821,'The Second Half','Roddy Doyle','Orion Publishing','2015/9/15','English','Sports','P',11.99,'D',6.47,320);
+Query OK, 1 row affected, 2 warnings (0.05 sec)
+
+mysql> 
+mysql> Insert Into Books
+    -> values(0718193997,'Keane: The Autobiography','Roy Keane', 'Penguin Global','2012/1/18','English','Sports','P',11.99,null,null,336);
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+mysql> 
+mysql> Show tables;
++-----------------+
+| Tables_in_hrwed |
++-----------------+
+| books           |
+| countries       |
+| departments     |
+| employees       |
+| job_grades      |
+| job_history     |
+| jobs            |
+| locations       |
+| regions         |
++-----------------+
+9 rows in set (0.01 sec)
+
+mysql> 
+mysql> select title,author
+    -> from books;
++------------------------------------------------------------------+------------------------------------+
+| title                                                            | author                             |
++------------------------------------------------------------------+------------------------------------+
+| Periodization Training:Theory and Methodology                    | Tudor Bompa                        |
+| The Manager                                                      | Mike Carson                        |
+| Pep Guardiola: Another Way of Winning                            | Guillem Balague                    |
+| Core Training Anatomy                                            | Frédéric Delavier                  |
+| Steven Gerrard: My Liverpool Story                               | Steven Gerrard                     |
+| Luis Suarez: Crossing the Line - My Story                        | Luis Suarez                        |
+| Soccer modern tactics                                            | Alessandro Zauli                   |
+| The Second Half                                                  | Roddy Doyle                        |
+| Red Men: Liverpool Football Club The Biography                   | John Williams                      |
+| The Coaching Philosophies of Louis van Gaal and the Ajax Coaches | Henny Kormelink                    |
+| Attacking Soccer                                                 | Massimo Lucchesi                   |
+| Teambuilding: the road to success                                | Rinus Michels                      |
+| I Think Therefore I Play                                         | Andrea Pirlo                       |
+| The Flea - The Amazing Story of Leo Messi                        | Michael Part                       |
+| El amor en los tiempos del colera                                | Gabriel Garcia Marquez             |
+| Cien años de Soledad                                             | Gabriel Garcia Marquez             |
+| La vida que Pensamos                                             | Eduardo Sacheri                    |
+| Ser Feliz Era Esto                                               | Eduardo Sacheri                    |
+| Once minutos                                                     | Paulo Coelho                       |
+| One Hundred Years of Solitude                                    | Gabriel Garcia Marquez             |
+| El vencedor esta solo                                            | Paulo Coelho                       |
+| The Alchemist                                                    | Paulo Coelho                       |
+| El Alquimista                                                    | Paulo Coelho                       |
+| Keane: The Autobiography                                         | Roy Keane                          |
+| Essentials of strength training                                  | Thomas R. Baechle & Roger W. Earle |
+| Strength Training Anatomy                                        | Frédéric Delavier                  |
+| Las venas abiertas de America Latina                             | Eduardo Galeano                    |
+| El futbol a sol y sombra                                         | Eduardo Galeano                    |
+| Open Veins of Latin America                                      | Eduardo Galeano                    |
+| Jose Mourinho: Special Leadership                                | Luis Lourenco                      |
++------------------------------------------------------------------+------------------------------------+
+30 rows in set (0.00 sec)
+
+mysql> 
+mysql> exit;
+- - - - - - - - - - - - - - - - End of file - - - - - - - -   - - - - - - - - - - - - - - - - -  - - - - -

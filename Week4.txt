@@ -1,0 +1,865 @@
+Monday October 25, 2017
+Week 4
+Fall is here.
+
+
+Outer Joins-----------------------------------------------
+
+Q44. Display the employees that work for a department and those departments that do not have any employees assigned to.
+
+
+mysql> Select e.last_name, d.department_name "Works for"
+    -> from employees e RIGHT OUTER JOIN departments d
+    ->      ON e.department_id = d.department_id 
+    -> order by d.department_name;
++-----------+----------------+
+| last_name | Works for      |
++-----------+----------------+
+| Higgins   | Accounting     |
+| Gietz     | Accounting     |
+| Whalen    | Administration |
+| NULL      | Contracting    |<-----
+| King      | Executive      |
+| Kochhar   | Executive      |
+| Ernst     | IT             |
+| Hunold    | IT             |
+| Lorentz   | IT             |
+| Fay       | Marketing      |
+| Hartstein | Marketing      |
+| Taylor    | Sales          |
+| Abel      | Sales          |
+| Zlotkey   | Sales          |
+| Rajs      | Shipping       |
+| Vargas    | Shipping       |
+| Mourgos   | Shipping       |
+| Matos     | Shipping       |
+| Davies    | Shipping       |
++-----------+----------------+
+19 rows in set (0.18 sec)
+
+
+mysql> Select e.last_name, d.department_name "Works for"
+    -> from employees e RIGHT OUTER JOIN departments d
+    ->      ON e.department_id = d.department_id 
+    -> order by e.last_name;
++-----------+----------------+
+| last_name | Works for      |
++-----------+----------------+
+| NULL      | Contracting    | <----
+| Abel      | Sales          |
+| Davies    | Shipping       |
+| Ernst     | IT             |
+| Fay       | Marketing      |
+| Gietz     | Accounting     |
+| Hartstein | Marketing      |
+| Higgins   | Accounting     |
+| Hunold    | IT             |
+| King      | Executive      |
+| Kochhar   | Executive      |
+| Lorentz   | IT             |
+| Matos     | Shipping       |
+| Mourgos   | Shipping       |
+| Rajs      | Shipping       |
+| Taylor    | Sales          |
+| Vargas    | Shipping       |
+| Whalen    | Administration |
+| Zlotkey   | Sales          |
++-----------+----------------+
+19 rows in set (0.00 sec)
+
+
+Q45. Display the employees that work for a department and those employees that re not assigned to any department.
+
+mysql> Select e.last_name, d.department_name "Works for"
+    -> from employees e LEFT OUTER JOIN departments d
+    ->      ON e.department_id = d.department_id
+    -> Order by d.department_name;
++-----------+----------------+
+| last_name | Works for      |
++-----------+----------------+
+| Grant     | NULL           | <-----
+| Gietz     | Accounting     |
+| Higgins   | Accounting     |
+| Whalen    | Administration |
+| King      | Executive      |
+| Kochhar   | Executive      |
+| Ernst     | IT             |
+| Hunold    | IT             |
+| Lorentz   | IT             |
+| Fay       | Marketing      |
+| Hartstein | Marketing      |
+| Taylor    | Sales          |
+| Abel      | Sales          |
+| Zlotkey   | Sales          |
+| Rajs      | Shipping       |
+| Vargas    | Shipping       |
+| Mourgos   | Shipping       |
+| Matos     | Shipping       |
+| Davies    | Shipping       |
++-----------+----------------+
+19 rows in set (0.00 sec)
+
+
+Q46. Display the employee names that work for the Accounting department.
+
+Example of a Cartesian product (forgot to Join the tables)
+
+mysql> Select e.last_name Name, d.department_name
+    -> from employees e, departments d
+    -> where d.department_name = 'Accounting';
++-----------+-----------------+
+| Name      | department_name |
++-----------+-----------------+
+| King      | Accounting      |
+| Kochhar   | Accounting      |
+| Hunold    | Accounting      |
+| Ernst     | Accounting      |
+| Lorentz   | Accounting      |
+| Mourgos   | Accounting      |
+| Rajs      | Accounting      |
+| Davies    | Accounting      |
+| Matos     | Accounting      |
+| Vargas    | Accounting      |
+| Zlotkey   | Accounting      |
+| Abel      | Accounting      |
+| Taylor    | Accounting      |
+| Grant     | Accounting      |
+| Whalen    | Accounting      |
+| Hartstein | Accounting      |
+| Fay       | Accounting      |
+| Higgins   | Accounting      |
+| Gietz     | Accounting      |
++-----------+-----------------+
+19 rows in set (0.02 sec)
+
+Cartesian Product
+
+mysql> Select e.last_name Name, d.department_name
+    -> from employees e, departments d;
++-----------+-----------------+
+| Name      | department_name |
++-----------+-----------------+
+| King      | Administration  |
+| King      | Marketing       |
+| King      | Shipping        |
+| King      | IT              |
+| King      | Sales           |
+| King      | Executive       |
+| King      | Accounting      |
+| King      | Contracting     |
+| Kochhar   | Administration  |
+| Kochhar   | Marketing       |
+| Kochhar   | Shipping        |
+| Kochhar   | IT              |
+| Kochhar   | Sales           |
+| Kochhar   | Executive       |
+| Kochhar   | Accounting      |
+| Kochhar   | Contracting     |
+| Hunold    | Administration  |
+| Hunold    | Marketing       |
+| Hunold    | Shipping        |
+| Hunold    | IT              |
+| Hunold    | Sales           |
+| Hunold    | Executive       |
+| Hunold    | Accounting      |
+| Hunold    | Contracting     |
+| Ernst     | Administration  |
+| Ernst     | Marketing       |
+| Ernst     | Shipping        |
+| Ernst     | IT              |
+| Ernst     | Sales           |
+| Ernst     | Executive       |
+| Ernst     | Accounting      |
+| Ernst     | Contracting     |
+| Lorentz   | Administration  |
+| Lorentz   | Marketing       |
+| Lorentz   | Shipping        |
+| Lorentz   | IT              |
+| Lorentz   | Sales           |
+| Lorentz   | Executive       |
+| Lorentz   | Accounting      |
+| Lorentz   | Contracting     |
+| Mourgos   | Administration  |
+| Mourgos   | Marketing       |
+| Mourgos   | Shipping        |
+| Mourgos   | IT              |
+| Mourgos   | Sales           |
+| Mourgos   | Executive       |
+| Mourgos   | Accounting      |
+| Mourgos   | Contracting     |
+| Rajs      | Administration  |
+| Rajs      | Marketing       |
+| Rajs      | Shipping        |
+| Rajs      | IT              |
+| Rajs      | Sales           |
+| Rajs      | Executive       |
+| Rajs      | Accounting      |
+| Rajs      | Contracting     |
+| Davies    | Administration  |
+| Davies    | Marketing       |
+| Davies    | Shipping        |
+| Davies    | IT              |
+| Davies    | Sales           |
+| Davies    | Executive       |
+| Davies    | Accounting      |
+| Davies    | Contracting     |
+| Matos     | Administration  |
+| Matos     | Marketing       |
+| Matos     | Shipping        |
+| Matos     | IT              |
+| Matos     | Sales           |
+| Matos     | Executive       |
+| Matos     | Accounting      |
+| Matos     | Contracting     |
+| Vargas    | Administration  |
+| Vargas    | Marketing       |
+| Vargas    | Shipping        |
+| Vargas    | IT              |
+| Vargas    | Sales           |
+| Vargas    | Executive       |
+| Vargas    | Accounting      |
+| Vargas    | Contracting     |
+| Zlotkey   | Administration  |
+| Zlotkey   | Marketing       |
+| Zlotkey   | Shipping        |
+| Zlotkey   | IT              |
+| Zlotkey   | Sales           |
+| Zlotkey   | Executive       |
+| Zlotkey   | Accounting      |
+| Zlotkey   | Contracting     |
+| Abel      | Administration  |
+| Abel      | Marketing       |
+| Abel      | Shipping        |
+| Abel      | IT              |
+| Abel      | Sales           |
+| Abel      | Executive       |
+| Abel      | Accounting      |
+| Abel      | Contracting     |
+| Taylor    | Administration  |
+| Taylor    | Marketing       |
+| Taylor    | Shipping        |
+| Taylor    | IT              |
+| Taylor    | Sales           |
+| Taylor    | Executive       |
+| Taylor    | Accounting      |
+| Taylor    | Contracting     |
+| Grant     | Administration  |
+| Grant     | Marketing       |
+| Grant     | Shipping        |
+| Grant     | IT              |
+| Grant     | Sales           |
+| Grant     | Executive       |
+| Grant     | Accounting      |
+| Grant     | Contracting     |
+| Whalen    | Administration  |
+| Whalen    | Marketing       |
+| Whalen    | Shipping        |
+| Whalen    | IT              |
+| Whalen    | Sales           |
+| Whalen    | Executive       |
+| Whalen    | Accounting      |
+| Whalen    | Contracting     |
+| Hartstein | Administration  |
+| Hartstein | Marketing       |
+| Hartstein | Shipping        |
+| Hartstein | IT              |
+| Hartstein | Sales           |
+| Hartstein | Executive       |
+| Hartstein | Accounting      |
+| Hartstein | Contracting     |
+| Fay       | Administration  |
+| Fay       | Marketing       |
+| Fay       | Shipping        |
+| Fay       | IT              |
+| Fay       | Sales           |
+| Fay       | Executive       |
+| Fay       | Accounting      |
+| Fay       | Contracting     |
+| Higgins   | Administration  |
+| Higgins   | Marketing       |
+| Higgins   | Shipping        |
+| Higgins   | IT              |
+| Higgins   | Sales           |
+| Higgins   | Executive       |
+| Higgins   | Accounting      |
+| Higgins   | Contracting     |
+| Gietz     | Administration  |
+| Gietz     | Marketing       |
+| Gietz     | Shipping        |
+| Gietz     | IT              |
+| Gietz     | Sales           |
+| Gietz     | Executive       |
+| Gietz     | Accounting      |
+| Gietz     | Contracting     |
++-----------+-----------------+
+152 rows in set (0.00 sec)
+
+
+NON Equi Joins ---------------------------------------------------------
+
+
+Q47. Find the Grade level corresponding to the salary of each employee
+Display last name, salary and grade level
+
+mysql> show tables;
++--------------+
+| Tables_in_hr |
++--------------+
+| countries    |
+| departments  |
+| employees    |
+| job_grades   |
+| job_history  |
+| jobs         |
+| locations    |
+| music        |
+| regions      |
++--------------+
+9 rows in set (0.05 sec)
+
+mysql> desc job_grades;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| Grade_Level | varchar(3)   | YES  |     | NULL    |       |
+| Lowest_Sal  | decimal(6,0) | YES  |     | NULL    |       |<-----
+| Highest_Sal | decimal(6,0) | YES  |     | NULL    |       |<-----
++-------------+--------------+------+-----+---------+-------+
+3 rows in set (0.07 sec)
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |<-----
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  |     | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+Standard Syntax
+
+mysql> Select e.last_name Name, e.salary Salary, jb.grade_level "Grade"
+    -> from employees e, job_grades jb
+    -> where e.salary BETWEEN jb.lowest_sal AND jb.highest_sal
+    -> Order by 3;
++-----------+----------+-------+
+| Name      | Salary   | Grade |
++-----------+----------+-------+
+| Matos     |  2600.00 | A     |
+| Vargas    |  2500.00 | A     |
+| Lorentz   |  4200.00 | B     |
+| Davies    |  3100.00 | B     |
+| Mourgos   |  5800.00 | B     |
+| Rajs      |  3500.00 | B     |
+| Whalen    |  4400.00 | B     |
+| Taylor    |  8600.00 | C     |
+| Hunold    |  9000.00 | C     |
+| Gietz     |  8300.00 | C     |
+| Grant     |  7000.00 | C     |
+| Fay       |  6000.00 | C     |
+| Ernst     |  6000.00 | C     |
+| Hartstein | 13000.00 | D     |
+| Zlotkey   | 10500.00 | D     |
+| Abel      | 11000.00 | D     |
+| Higgins   | 12000.00 | D     |
+| King      | 24000.00 | E     |
+| Kochhar   | 17000.00 | E     |
++-----------+----------+-------+
+19 rows in set (0.05 sec)
+
+Syntax 1999
+
+mysql> Select e.last_name Name, e.salary Salary, jb.grade_level "Grade"
+    -> from employees e INNER JOIN  job_grades jb
+    ->       ON  e.salary BETWEEN jb.lowest_sal AND jb.highest_sal
+    -> Order by 3;
++-----------+----------+-------+
+| Name      | Salary   | Grade |
++-----------+----------+-------+
+| Matos     |  2600.00 | A     |
+| Vargas    |  2500.00 | A     |
+| Lorentz   |  4200.00 | B     |
+| Davies    |  3100.00 | B     |
+| Mourgos   |  5800.00 | B     |
+| Rajs      |  3500.00 | B     |
+| Whalen    |  4400.00 | B     |
+| Taylor    |  8600.00 | C     |
+| Hunold    |  9000.00 | C     |
+| Gietz     |  8300.00 | C     |
+| Grant     |  7000.00 | C     |
+| Fay       |  6000.00 | C     |
+| Ernst     |  6000.00 | C     |
+| Hartstein | 13000.00 | D     |
+| Zlotkey   | 10500.00 | D     |
+| Abel      | 11000.00 | D     |
+| Higgins   | 12000.00 | D     |
+| King      | 24000.00 | E     |
+| Kochhar   | 17000.00 | E     |
++-----------+----------+-------+
+19 rows in set (0.00 sec)
+
+
+Q48. Display employee id, department name and city where the department is located.
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  |     | NULL    |       |<-----
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.02 sec)
+
+mysql> desc departments;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| Department_Id   | decimal(4,0) | NO   | PRI | NULL    |       |<-----
+| Department_Name | varchar(30)  | NO   |     | NULL    |       |
+| Manager_Id      | decimal(6,0) | YES  |     | NULL    |       |
+| Location_Id     | decimal(4,0) | YES  |     | NULL    |       |<-----
++-----------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc locations;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Location_Id    | decimal(4,0) | NO   | PRI | NULL    |       |<-----
+| Street_Address | varchar(40)  | YES  |     | NULL    |       |
+| Postal_Code    | varchar(12)  | YES  |     | NULL    |       |
+| City           | varchar(30)  | NO   |     | NULL    |       |
+| State_Province | varchar(25)  | YES  |     | NULL    |       |
+| Country_Id     | char(2)      | YES  |     | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+6 rows in set (0.02 sec)
+
+mysql> Select e.employee_id ID, d.department_name Department, l.city City
+    -> from employees e JOIN departments d
+    ->     ON e.department_id = d.department_id
+    ->    JOIN Locations l
+    ->     ON d.location_id = l.location_id
+    -> Order by 3;
++-----+----------------+---------------------+
+| ID  | Department     | City                |
++-----+----------------+---------------------+
+| 176 | Sales          | Oxford              |
+| 174 | Sales          | Oxford              |
+| 149 | Sales          | Oxford              |
+| 200 | Administration | Seattle             |
+| 101 | Executive      | Seattle             |
+| 206 | Accounting     | Seattle             |
+| 100 | Executive      | Seattle             |
+| 205 | Accounting     | Seattle             |
+| 143 | Shipping       | South San Francisco |
+| 142 | Shipping       | South San Francisco |
+| 141 | Shipping       | South San Francisco |
+| 124 | Shipping       | South San Francisco |
+| 144 | Shipping       | South San Francisco |
+| 107 | IT             | Southlake           |
+| 104 | IT             | Southlake           |
+| 103 | IT             | Southlake           |
+| 202 | Marketing      | Toronto             |
+| 201 | Marketing      | Toronto             |
++-----+----------------+---------------------+
+18 rows in set (0.02 sec)
+
+
+
+Standard Syntax
+
+mysql> Select e.employee_id ID, d.department_name Department, l.city City
+    -> From employees e, departments d, locations l
+    -> Where e.department_id = d.department_id AND d.location_id = l.location_id;
++-----+----------------+---------------------+
+| ID  | Department     | City                |
++-----+----------------+---------------------+
+| 103 | IT             | Southlake           |
+| 104 | IT             | Southlake           |
+| 107 | IT             | Southlake           |
+| 124 | Shipping       | South San Francisco |
+| 141 | Shipping       | South San Francisco |
+| 142 | Shipping       | South San Francisco |
+| 143 | Shipping       | South San Francisco |
+| 144 | Shipping       | South San Francisco |
+| 100 | Executive      | Seattle             |
+| 101 | Executive      | Seattle             |
+| 200 | Administration | Seattle             |
+| 205 | Accounting     | Seattle             |
+| 206 | Accounting     | Seattle             |
+| 201 | Marketing      | Toronto             |
+| 202 | Marketing      | Toronto             |
+| 149 | Sales          | Oxford              |
+| 174 | Sales          | Oxford              |
+| 176 | Sales          | Oxford              |
++-----+----------------+---------------------+
+18 rows in set (0.00 sec)
+
+
+~~~Q49. Display the name(s) of employees that work in Seattle
+
+
+Syntax 1999
+
+mysql> Select e.last_name Name
+    -> from employees e JOIN departments d
+    ->     ON e.department_id = d.department_id
+    ->    JOIN Locations l
+    ->     ON d.location_id = l.location_id
+    -> where l.city = 'Seattle'
+    -> Order by 1;
++---------+
+| Name    |
++---------+
+| Gietz   |
+| Higgins |
+| King    |
+| Kochhar |
+| Whalen  |
++---------+
+5 rows in set (0.01 sec)
+
+Standard Syntax
+
+mysql> Select e.last_name Name
+    -> from employees e, departments d, Locations l
+    -> Where e.department_id = d.department_id AND
+    ->       d.location_id = l.location_id
+    ->   AND l.city = 'Seattle';
+
++---------+
+| Name    |
++---------+
+| Gietz   |
+| Higgins |
+| King    |
+| Kochhar |
+| Whalen  |
++---------+
+5 rows in set (0.01 sec)
+
+Q49a. How many employees work in Seattle?
+
+
+Standard Syntax 
+
+mysql> Select count(e.last_name) "Number of Employees"
+    -> from employees e, departments d, Locations l
+    -> Where e.department_id = d.department_id AND
+    ->       d.location_id = l.location_id
+    ->   AND l.city = 'Seattle';
+   
++------+
+| Name |
++------+
+|    5 |
++------+
+1 row in set (0.03 sec)
+
+
+Syntax 1999
+
+mysql> Select count(e.last_name) "Number of Employees"
+    -> from employees e JOIN departments d
+    ->     ON e.department_id = d.department_id
+    ->    JOIN Locations l
+    ->     ON d.location_id = l.location_id
+    -> where l.city = 'Seattle';
++---------------------+
+| Number of Employees |
++---------------------+
+|                   5 |
++---------------------+
+1 row in set (0.00 sec)
+
+
+Q51. Display the country name where Matos works.
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  |     | NULL    |       |<------
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.02 sec)
+
+mysql> desc departments;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| Department_Id   | decimal(4,0) | NO   | PRI | NULL    |       |<----
+| Department_Name | varchar(30)  | NO   |     | NULL    |       |
+| Manager_Id      | decimal(6,0) | YES  |     | NULL    |       |
+| Location_Id     | decimal(4,0) | YES  |     | NULL    |       |<----
++-----------------+--------------+------+-----+---------+-------+
+4 rows in set (0.03 sec)
+
+mysql> desc locations;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Location_Id    | decimal(4,0) | NO   | PRI | NULL    |       |<----
+| Street_Address | varchar(40)  | YES  |     | NULL    |       |
+| Postal_Code    | varchar(12)  | YES  |     | NULL    |       |
+| City           | varchar(30)  | NO   |     | NULL    |       |
+| State_Province | varchar(25)  | YES  |     | NULL    |       |
+| Country_Id     | char(2)      | YES  |     | NULL    |       |<----
++----------------+--------------+------+-----+---------+-------+
+6 rows in set (0.03 sec)
+
+mysql> desc countries;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| Country_Id   | char(2)      | NO   | PRI | NULL    |       |<----
+| Country_Name | varchar(40)  | YES  |     | NULL    |       |
+| Region_Id    | decimal(2,0) | YES  |     | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+3 rows in set (0.03 sec)
+
+Standard Syntax
+
+mysql> Select c.country_name "Country"
+    -> from employees e, Departments d, Locations l, Countries c
+    -> Where e.department_id = d.department_id AND
+    ->       d.location_id = l.location_id  AND 
+    ->       l.country_id = c.country_id AND 
+    ->       e.last_name = 'Matos';
++--------------------------+
+| Country                  |
++--------------------------+
+| United States of America |
++--------------------------+
+1 row in set (0.02 sec)
+
+Syntax 1999
+
+mysql> Select c.country_name "Country"
+    -> from employees e JOIN Departments d
+    ->     ON e.department_id = d.department_id
+    ->    JOIN Locations l
+    ->     ON d.location_id = l.location_id
+    ->    JOIN Countries c
+    ->     ON l.country_id = c.country_id
+    -> Where e.last_name = 'Matos';
++--------------------------+
+| Country                  |
++--------------------------+
+| United States of America |
++--------------------------+
+1 row in set (0.02 sec)
+
+
+
+Q52. Display the names of employees working in Canada.
+
+Standard Syntax
+
+mysql> Select e.last_name Name
+    -> From employees e, departments d, locations l, countries c
+    -> Where e.department_id = d.department_id 
+    ->       AND d.location_id = l.location_id
+    ->       AND l.country_id = c.country_id
+    ->   AND l.country_name = 'Canada';
+
++-----------+
+| Name      |
++-----------+
+| Hartstein |
+| Fay       |
++-----------+
+2 rows in set (0.00 sec)
+
+Syntax 1999
+
+mysql> Select e.last_name Name
+    -> From employees e JOIN departments d  
+    ->      ON e.department_id = d.department_id 
+    ->    JOIN locations l
+    ->      ON d.location_id = l.location_id
+    ->    JOIN countries c
+    ->       AND l.country_id = c.country_id
+    ->   AND c.country_name = 'Canada';
++-----------+
+| Name      |
++-----------+
+| Hartstein |
+| Fay       |
++-----------+
+2 rows in set (0.00 sec)
+
+
+
+~~~Q53. How many employees work in each country.
+
+Standard Syntax
+
+mysql> Select c.country_name Country, count(e.last_name) "Number of Employees"
+    -> From employees e, Departments d, locations l, countries c
+    -> Where  e.department_id = d.department_id AND
+    ->        d.location_id = l.location_id  AND 
+    ->        l.country_id = c.country_id
+    -> Group by c.country_name;
++--------------------------+---------------------+
+| Country                  | Number of Employees |
++--------------------------+---------------------+
+| Canada                   |                   2 |
+| United Kingdom           |                   3 |
+| United States of America |                  13 |
++--------------------------+---------------------+
+3 rows in set (0.01 sec)
+
+
+Syntax 1999
+
+mysql> Select c.country_name Country, count(e.last_name) "Number of Employees"
+    -> From employees e INNER JOIN Departments d
+    ->      ON e.department_id = d.department_id
+    -> JOIN locations l
+    ->  ON d.location_id = l.location_id
+    -> JOIN countries c
+    ->  ON l.country_id = c.country_id
+    -> Group by c.country_name;
++--------------------------+---------------------+
+| Country                  | Number of Employees |
++--------------------------+---------------------+
+| Canada                   |                   2 |
+| United Kingdom           |                   3 |
+| United States of America |                  13 |
++--------------------------+---------------------+
+3 rows in set (0.01 sec)
+
+mysql> show tables;
++--------------+
+| Tables_in_hr |
++--------------+
+| countries    |
+| departments  |
+| employees    |
+| job_grades   |
+| job_history  |
+| jobs         |
+| locations    |
+| music        |
+| regions      |
++--------------+
+9 rows in set (0.01 sec)
+
+
+Q54. Find the employees who had previous jobs in the company.
+Display last Name, job title(s), starting date and ending date.
+
+mysql> 
+mysql> desc job_history;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| Employee_Id   | decimal(6,0) | NO   |     | NULL    |       |
+| Start_Date    | date         | NO   |     | NULL    |       |
+| End_Date      | date         | NO   |     | NULL    |       |
+| Job_Id        | varchar(10)  | NO   |     | NULL    |       |
+| Department_Id | decimal(4,0) | YES  |     | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+5 rows in set (0.06 sec)
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  |     | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+mysql> desc jobs;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| Job_Id     | varchar(10)  | NO   |     | NULL    |       |
+| Job_Title  | varchar(35)  | NO   |     | NULL    |       |
+| Min_Salary | decimal(6,0) | YES  |     | NULL    |       |
+| Max_Salary | decimal(6,0) | YES  |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+4 rows in set (0.03 sec)
+
+
+Standard Syntax 
+
+mysql> Select e.last_name Name, j.job_title Title, jh.start_date "Start Date", jh.end_date "End Date"
+    -> from employees e, job_history jh, jobs j
+    -> Where e.employee_id = jh.employee_id AND jh.job_id = j.job_id;
++-----------+--------------------------+------------+------------+
+| Name      | Title                    | Start Date | End Date   |
++-----------+--------------------------+------------+------------+
+| Whalen    | Administration Assistant | 1987-09-17 | 1993-06-17 |
+| Kochhar   | Accounting Manager       | 1993-10-28 | 1997-03-15 |
+| Whalen    | Public Accountant        | 1994-07-01 | 1998-12-31 |
+| Kochhar   | Public Accountant        | 1989-09-21 | 1993-10-27 |
+| Taylor    | Sales Manager            | 1999-01-01 | 1999-12-31 |
+| Taylor    | Sales Representative     | 1998-03-24 | 1998-12-31 |
+| Hartstein | Marketing Representative | 1996-02-17 | 1999-12-19 |
++-----------+--------------------------+------------+------------+
+7 rows in set (0.03 sec)
+
+
+Syntax 1999
+
+mysql> Select e.last_name Name, j.job_title Title, jh.start_date "Start Date", jh.end_date "End Date"
+    -> from employees e JOIN job_history jh
+    ->      ON e.employee_id = jh.employee_id
+    ->    JOIN jobs j
+    ->      ON jh.job_id = j.job_id;
++-----------+--------------------------+------------+------------+
+| Name      | Title                    | Start Date | End Date   |
++-----------+--------------------------+------------+------------+
+| Whalen    | Administration Assistant | 1987-09-17 | 1993-06-17 |
+| Kochhar   | Accounting Manager       | 1993-10-28 | 1997-03-15 |
+| Whalen    | Public Accountant        | 1994-07-01 | 1998-12-31 |
+| Kochhar   | Public Accountant        | 1989-09-21 | 1993-10-27 |
+| Taylor    | Sales Manager            | 1999-01-01 | 1999-12-31 |
+| Taylor    | Sales Representative     | 1998-03-24 | 1998-12-31 |
+| Hartstein | Marketing Representative | 1996-02-17 | 1999-12-19 |
++-----------+--------------------------+------------+------------+
+7 rows in set (0.03 sec)
+
+
+
+mysql> exit;
+------------------------------------------ End of file ----------------------------------------------------

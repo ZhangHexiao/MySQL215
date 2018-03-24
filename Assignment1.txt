@@ -1,0 +1,70 @@
+Assignment #1
+Name: Hexiao Zhang
+Student ID: 40075567
+
+1.  Display the book title and the published date of the book(s) written by Paulo Coelho of which we have an English copy. (3 Marks)
+
+select Title "Book Title", PubDate "Published Date”
+from Books
+where Author=”Paulo Coelho” AND Language=”English”; 
+
+2.  How many books about Sports in English do we have? (3 Marks)
+
+select Category "Sports Books in English",count(Category) Number
+from Books
+Where Category="Sports" AND Language="English"
+Group by Category;
+
+3.  Display the books about coaching for which we have both formats.
+    Display Author, Publisher Company and Published date in one column named “Book   Information".  (3 Marks)
+
+select concat(Author,"  ",Publisher,"  ","PubDate") "Book Information"
+from Books
+where PaperB IS NOT NULL and DigitF IS NOT NULL;
+
+4.  In the category fiction how many books there are in Digital format, how many there are in  Paperback Format? (3 Marks)
+
+select sum(if(PaperB IS NULL,0,1)) "Paper Format",sum(if(DigitF IS NULL,0,1)) "Digital Format"
+from Books
+where Category="Fiction";
+
+5.  How much we had paid for the books that we have in paperback only about Sports? 
+Display the amount formatted as dollar amount with 2 decimal places. (3 Marks)
+
+Select format(Sum(PBsalePrice),2) "Total Cost"
+from Books
+where Category="Sports";
+
+6.  Display book title and date published of sports books that were published in 2010. (3 Marks)
+
+select Title, PubDate "Published Date"
+from Books
+Where Category="Sports" AND year(PubDate)=2010;
+
+7. From which Publishing Company we have more than 3 Books? (3 Marks)
+
+select Publisher "Publishing Company", count(Title) "Number of Books"
+from Books
+Group by Publisher
+Having count(Title)>3;
+
+8. Display the title of the book(s) about coaching that we have paperback format only. (3 Marks)
+
+select Title
+from Books
+where Category="Coaching" AND PaperB IS NOT NULL AND DigitF IS NULL;
+
+9. Display the title of the book(s) for which we have digital format only. (3 Marks)
+
+select Title
+from Books
+where PaperB IS NULL AND DigitF IS NOT NULL;
+
+10. Display the author name that have more that 2 entries in our collection. (3 Marks)
+
+select Author, count(Title) "Number of Books"
+from Books
+Group by Author
+Having count(Title)>2;
+
+

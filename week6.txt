@@ -1,0 +1,652 @@
+Nov 8, 2017
+
+Week 6
+
+DML -- Data Manipulation Language
+
+Inserting rows onto a table
+
+Q65.  A new department has been created. The id is 81, Public Affairs at location 1700.
+The manager of the new department is King.
+
+mysql> desc departments;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| Department_Id   | decimal(4,0) | NO   | PRI | NULL    |       |
+| Department_Name | varchar(30)  | NO   |     | NULL    |       |
+| Manager_Id      | decimal(6,0) | YES  |     | NULL    |       |
+| Location_Id     | decimal(4,0) | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+4 rows in set (0.03 sec)
+
+
+Find the employee id of King
+
+mysql> 
+mysql> 
+mysql> select employee_id
+    -> from employees
+    -> where last_name = 'King';
++-------------+
+| employee_id |
++-------------+
+|         100 |
++-------------+
+1 row in set (0.05 sec)
+
+mysql> Insert INTO Departments(Department_id,Department_name,Manager_id,Location_id)
+    -> Values (81,'Public Affairs',100,1700);
+Query OK, 1 row affected (0.06 sec)
+
+mysql> select * 
+    -> from departments;
++---------------+-----------------+------------+-------------+
+| Department_Id | Department_Name | Manager_Id | Location_Id |
++---------------+-----------------+------------+-------------+
+|            10 | Administration  |        200 |        1700 |
+|            20 | Marketing       |        201 |        1800 |
+|            50 | Shipping        |        124 |        1500 |
+|            60 | IT              |        103 |        1400 |
+|            80 | Sales           |        149 |        2500 |
+|            81 | Public Affairs  |        100 |        1700 |
+|            90 | Executive       |        100 |        1700 |
+|           110 | Accounting      |        205 |        1700 |
+|           190 | Contracting     |       NULL |        1700 |
++---------------+-----------------+------------+-------------+
+9 rows in set (0.00 sec)
+
+
+Q66. Insert department 89, Day Care Services at location 1700 onto the departments table. 
+The manager has not been assigned yet.
+
+mysql> desc departments;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| Department_Id   | decimal(4,0) | NO   | PRI | NULL    |       |
+| Department_Name | varchar(30)  | NO   |     | NULL    |       |
+| Manager_Id      | decimal(6,0) | YES  |     | NULL    |       |<-----
+| Location_Id     | decimal(4,0) | YES  |     | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+4 rows in set (0.03 sec)
+
+mysql> Insert Into Departments
+    -> Values(89, 'Day Care Services',null, 1700);
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select * 
+    -> from departments;
++---------------+-------------------+------------+-------------+
+| Department_Id | Department_Name   | Manager_Id | Location_Id |
++---------------+-------------------+------------+-------------+
+|            10 | Administration    |        200 |        1700 |
+|            20 | Marketing         |        201 |        1800 |
+|            50 | Shipping          |        124 |        1500 |
+|            60 | IT                |        103 |        1400 |
+|            80 | Sales             |        149 |        2500 |
+|            81 | Public Affairs    |        100 |        1700 |
+|            89 | Day Care Services |       NULL |        1700 |
+|            90 | Executive         |        100 |        1700 |
+|           110 | Accounting        |        205 |        1700 |
+|           190 | Contracting       |       NULL |        1700 |
++---------------+-------------------+------------+-------------+
+10 rows in set (0.00 sec)
+
+
+Example of entering null values where null values are not accepted
+
+
+mysql> Insert Into Departments
+    -> Values(99, null,null, 1700);
+ERROR 1048 (23000): Column 'Department_Name' cannot be null
+
+
+Q67. Add Shipping and Handling with id 95 to the table departments
+
+Example: Not mentioning the column names where the information should be inserted
+
+mysql> Insert Into Departments
+    -> Values(95, 'Shipping and Handling');
+ERROR 1136 (21S01): Column count doesn't match value count at row 1
+
+Corrected version: Name the columns where the information should go.
+
+mysql> Insert Into Departments(department_id, department_name)
+    -> Values(95, 'Shipping and Handling');
+Query OK, 1 row affected (0.11 sec)
+
+
+=====
+Deleting rows from a table
+
+Q68. Remove the shipping and handling department from the database.
+
+mysql> Delete
+    -> from Departments
+    -> where department_name = 'Shipping and Handling';
+Query OK, 1 row affected (0.05 sec)
+
+mysql> select *
+    -> from departments;
++---------------+-------------------+------------+-------------+
+| Department_Id | Department_Name   | Manager_Id | Location_Id |
++---------------+-------------------+------------+-------------+
+|            10 | Administration    |        200 |        1700 |
+|            20 | Marketing         |        201 |        1800 |
+|            50 | Shipping          |        124 |        1500 |
+|            60 | IT                |        103 |        1400 |
+|            80 | Sales             |        149 |        2500 |
+|            81 | Public Affairs    |        100 |        1700 |
+|            89 | Day Care Services |       NULL |        1700 |
+|            90 | Executive         |        100 |        1700 |
+|           110 | Accounting        |        205 |        1700 |
+|           190 | Contracting       |       NULL |        1700 |
++---------------+-------------------+------------+-------------+
+10 rows in set (0.00 sec)
+
+
+Q69. Remove all employees working for the IT department.
+
+mysql>Delete
+    ->From employees
+    ->where department_id = (Select department_id
+    ->                       From departments
+    ->		             Where department_name = 'IT');
+					   
+					   
+Q70. Remove from the database al the departments located in Seattle.
+
+mysql>Delete
+    ->from departments
+    ->where location_id = (select location_id
+    ->                     from locations
+    ->		           where city = 'Seattle');
+    
+					 
+====
+Updating Rows from a table
+
+Q71. The employee whose id is 176 will be working for department 81
+Do the update
+mysql> Select department_id
+    -> from employees
+    -> where employee_id = 176;
++---------------+
+| department_id |
++---------------+
+|            80 |
++---------------+
+1 row in set (0.01 sec)
+
+mysql> UPDATE Employees
+    -> SET department_id = 81
+    -> where employee_id = 176;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> 
+mysql> 
+mysql> Select department_id
+    -> from employees
+    -> where employee_id = 176;
++---------------+
+| department_id |
++---------------+
+|            81 |
++---------------+
+1 row in set (0.00 sec)
+
+
+Q72. The department Public Affairs has been renamed Public Services and the new manager id is 102
+
+mysql> Select department_name, manager_id
+    -> from departments
+    -> where department_name = 'Public Affairs';
++-----------------+------------+
+| department_name | manager_id |
++-----------------+------------+
+| Public Affairs  |        100 |
++-----------------+------------+
+1 row in set (0.00 sec)
+
+mysql> UPdate Departments
+    -> Set department_name = 'Public Services', manager_id = 102
+    -> where department_name = 'Public Affairs';
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+mysql> Select department_name, manager_id
+    -> from departments
+    -> where department_name = 'Public Services';
++-----------------+------------+
+| department_name | manager_id |
++-----------------+------------+
+| Public Services |        102 |
++-----------------+------------+
+1 row in set (0.00 sec)
+
+
+Q73. The Contracting department has a new manager. The name of th enew manager is King.
+Do the update.
+
+mysql> UPDATE Departments
+    -> SET manager_id = (Select employee_id
+    ->                   from employees
+    ->                   where last_name = 'King')
+    -> Where department_name = 'Contracting';
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+
+
+===================== 
+DDL -- Data Definition Language
+
+
+mysql> Create database Julyreg;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use Julyreg;
+Database changed
+
+
+Running the Registration script 
+
+mysql> Drop Table Registrations;
+ERROR 1051 (42S02): Unknown table 'studentsreg.registrations'
+mysql> Drop Table CoursesOffered;
+ERROR 1051 (42S02): Unknown table 'studentsreg.coursesoffered'
+mysql> Drop Table Courses;
+ERROR 1051 (42S02): Unknown table 'studentsreg.courses'
+mysql> Drop Table Teachers;
+ERROR 1051 (42S02): Unknown table 'studentsreg.teachers'
+mysql> Drop Table Students;
+ERROR 1051 (42S02): Unknown table 'studentsreg.students'
+mysql> 
+mysql> 
+mysql> 
+mysql> Create Table Courses
+    -> (Cid varchar(7) Primary key,
+    ->  Ctitle varchar(30));
+Query OK, 0 rows affected (0.45 sec)
+
+mysql>  
+mysql> Create Table Teachers
+    -> (Eid varchar(7) Primary Key,
+    ->  TlastName varchar(30),
+    ->  TfirstName varchar(30),
+    ->  Taddress varchar(50),
+    ->  Temail varchar(50),
+    ->  TcontactNumber varchar(15));
+Query OK, 0 rows affected (0.36 sec)
+
+mysql>  
+mysql>  Create Table Students
+    -> (Sid varchar(7) Primary Key,
+    ->  SlastName varchar(30),
+    ->  SfirstName varchar(30),
+    ->  Saddress varchar(50),
+    ->  Semail varchar(50),
+    ->  SconctactNumber varchar(15));
+Query OK, 0 rows affected (0.36 sec)
+
+mysql>  
+mysql>  
+mysql>  Create Table CoursesOffered
+    ->  (Cid varchar(7),
+    ->   Csection varchar(5),
+    ->   Cterm varchar(10),
+    ->   CstarTime time,
+    ->   CStartDate Date,
+    ->   CendDate Date,
+    ->   Clocation varchar(5),
+    ->   Eid varchar(7),
+    ->   Foreign Key (Cid) References Courses(Cid),
+    ->   Foreign Key (Eid) References Teachers(Eid),
+    ->   Constraint CoursesOffered_pk Primary Key (Cid,Csection,Cterm));
+Query OK, 0 rows affected (0.53 sec)
+
+mysql>   
+mysql>   Create Table Registrations
+    ->   (Cid varchar(7),
+    ->    Csection varchar(5),
+    ->    Cterm varchar(10),
+    ->    Sid varchar(7),
+    ->    Grade varchar(3),
+    ->    RegDate timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    ->    Foreign Key (sid) References Students(Sid),
+    ->    Foreign Key (Cid,Csection,Cterm) References CoursesOffered(Cid,Csection,Cterm),
+    ->    Constraint Registrations_pk Primary Key(Cid,Csection,Cterm,Sid));
+Query OK, 0 rows affected (0.55 sec)
+
+mysql>    show tables;
++-----------------------+
+| Tables_in_studentsreg |
++-----------------------+
+| courses               |
+| coursesoffered        |
+| registrations         |
+| students              |
+| teachers              |
++-----------------------+
+5 rows in set (0.02 sec)
+
+mysql> desc coursesOffered;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| Cid        | varchar(7)  | NO   | PRI |         |       |
+| Csection   | varchar(5)  | NO   | PRI |         |       |
+| Cterm      | varchar(10) | NO   | PRI |         |       |
+| CstarTime  | time        | YES  |     | NULL    |       |
+| CStartDate | date        | YES  |     | NULL    |       |
+| CendDate   | date        | YES  |     | NULL    |       |
+| Clocation  | varchar(5)  | YES  |     | NULL    |       |
+| Eid        | varchar(7)  | YES  | MUL | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+8 rows in set (0.01 sec)
+
+
+
+-- Populate the Students table
+
+mysql> Insert Into Students
+    -> Values('4443329','Steven','King','180 Berri', 'SKING@gmail.com','5151234567');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4433321','Neena','Kochhar','200 St catherine', 'NKOCHHAR@hotmail.com','5151234568');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4445322','Alexander','Hunold',' 3000 Duluth', 'AHUNOLD@aol.com','5904234567'); 
+Query OK, 1 row affected (0.06 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4443322','Bruce','Ernst',' 500 St Denis','BERNST@gmail.com', '5904234568'); 
+Query OK, 1 row affected (0.05 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4443622','Diana','Lorentz',' 6600 Rue', 'DLORENTZ@gmail.com','5904235567');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4446322','Kevin','Mourgos','550 Here', 'KMOURGOS@gmail.com','6501235234');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4447322','Trenna','Rajs','6700 There av', 'TRAJS@hotmail.com','6501218009');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4483322','Curtis','Davies','4500 OverThere Av.', 'CDAVIES@hotmail.com','6501212994');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4493322','Randall','Matos',' 4389 Jamaica St','RMATOS@hotmail.com','6501212874');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> Values ('4431322','Peter','Vargas','4678 Rue Berri', 'PVARGAS@hotmail.com','6501212004');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> values ('1113334','Martin','James','1600 St Catherine West','James.Martin@concordia.ca','5148482424');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> values ('2223334','Messi','Leo','600 St Catherine West','leo.messi@concordia.ca','5148482626');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Students
+    -> values ('9993339','Suarez','Luis','300 St Denis','Luis.Suarez@Barcelona.ca','5148482699');
+Query OK, 1 row affected (0.03 sec)
+
+mysql>     
+mysql> Insert Into Students
+    -> values ('3335533','Pique','Gerard','333 Laval','Gerard.Pique@Barcelona.ca','5148482633');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> 
+mysql> 
+mysql> -- Populate Teachers Table
+mysql> 
+mysql> 
+mysql> Insert Into Teachers
+    -> values('0023456','Messina','Carlos','1250 De Maisonneuve West','Carlos.Messina@concordia.ca','5148482425');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql>     
+mysql>     Insert Into Teachers
+    -> values('0035070','Brown','Charles','450 St Catherine West','Charles.Brown@concordia.ca','4508483030');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Teachers
+    -> values('0044777','Martino','Gerrard','7300 Berri','Gerrard.Martino@concordia.ca','5144459988');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql>     
+mysql>     Insert Into Teachers
+    -> values('0058077','White','Ronnie','11450 Laval','Ronnie.White@concordia.ca','4503308888');
+Query OK, 1 row affected (0.05 sec)
+
+mysql> 
+mysql> Insert Into Teachers
+    -> values('0065079','Romano','Gino','6500 St Laurent','Romano.Gino@concordia.ca','5147330990');
+Query OK, 1 row affected (0.02 sec)
+
+mysql>     
+mysql>     Select * from teachers;
++---------+-----------+------------+--------------------------+------------------------------+----------------+
+| Eid     | TlastName | TfirstName | Taddress                 | Temail                       | TcontactNumber |
++---------+-----------+------------+--------------------------+------------------------------+----------------+
+| 0023456 | Messina   | Carlos     | 1250 De Maisonneuve West | Carlos.Messina@concordia.ca  | 5148482425     |
+| 0035070 | Brown     | Charles    | 450 St Catherine West    | Charles.Brown@concordia.ca   | 4508483030     |
+| 0044777 | Martino   | Gerrard    | 7300 Berri               | Gerrard.Martino@concordia.ca | 5144459988     |
+| 0058077 | White     | Ronnie     | 11450 Laval              | Ronnie.White@concordia.ca    | 4503308888     |
+| 0065079 | Romano    | Gino       | 6500 St Laurent          | Romano.Gino@concordia.ca     | 5147330990     |
++---------+-----------+------------+--------------------------+------------------------------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> 
+mysql> -- Populate Courses Table
+mysql> 
+mysql> Insert INTO Courses(Cid,Ctitle)
+    -> values('CEWP215','SQL Essentials');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert INTO Courses(Cid,Ctitle)
+    -> values('CEPH219','Java Programming I');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert INTO Courses(Cid,Ctitle)
+    -> values('CEDP150','Programming with PHP');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> -- Populate CoursesOffered Table
+mysql>    
+mysql> Insert INTO coursesOffered
+    -> values('CEWP215','C1','Spring2016','18:00','2016/04/04','2016/05/16','FB101','0023456');
+Query OK, 1 row affected (0.06 sec)
+
+mysql>     
+mysql> Insert INTO coursesOffered
+    -> values('CEPH219','C1','Spring2016','20:00','2016/04/04','2016/05/16','FB105','0035070');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert INTO coursesOffered
+    -> values('CEDP150','C1','Spring2016','18:00','2016/04/05','2016/05/16','FB101','0023456');
+Query OK, 1 row affected (0.09 sec)
+
+mysql>     
+mysql> Select * from coursesOffered;
++---------+----------+------------+-----------+------------+------------+-----------+---------+
+| Cid     | Csection | Cterm      | CstarTime | CStartDate | CendDate   | Clocation | Eid     |
++---------+----------+------------+-----------+------------+------------+-----------+---------+
+| CEDP150 | C1       | Spring2016 | 18:00:00  | 2016-04-05 | 2016-05-16 | FB101     | 0023456 |
+| CEPH219 | C1       | Spring2016 | 20:00:00  | 2016-04-04 | 2016-05-16 | FB105     | 0035070 |
+| CEWP215 | C1       | Spring2016 | 18:00:00  | 2016-04-04 | 2016-05-16 | FB101     | 0023456 |
++---------+----------+------------+-----------+------------+------------+-----------+---------+
+3 rows in set (0.00 sec)
+
+mysql> 
+mysql> -- Populate Registrations Table
+mysql> 
+mysql> Insert Into Registrations
+    -> values('CEWP215','C1','Spring2016','4443329',null,null);
+Query OK, 1 row affected (0.44 sec)
+
+mysql> 
+mysql> Insert Into Registrations
+    -> values('CEWP215','C1','Spring2016','4445322',null,null);
+Query OK, 1 row affected (0.06 sec)
+
+mysql> 
+mysql> Insert Into Registrations
+    -> values('CEWP215','C1','Spring2016','4443622',null,null);
+Query OK, 1 row affected (0.19 sec)
+
+mysql> 
+mysql> Insert Into Registrations
+    -> values('CEWP215','C1','Spring2016','4447322',null,null);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Registrations
+    -> values('CEWP215','C1','Spring2016','4431322',null,null);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> 
+mysql> Insert Into Registrations
+    -> values('CEWP215','C1','Spring2016','3335533',null,'2016-02-17 13:10:05');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> 
+mysql> Insert Into Registrations
+    -> values('CEDP150','C1','Spring2016','3335533',null,'2016-02-18 14:10:10');
+Query OK, 1 row affected (0.03 sec)
+
+mysql> select *
+    -> from courses;
++---------+----------------------+
+| Cid     | Ctitle               |
++---------+----------------------+
+| CEDP150 | Programming with PHP |
+| CEPH219 | Java Programming I   |
+| CEWP215 | SQL Essentials       |
++---------+----------------------+
+3 rows in set (0.00 sec)
+
+mysql> Select *
+    -> from students;
++---------+-----------+------------+------------------------+---------------------------+-----------------+
+| Sid     | SlastName | SfirstName | Saddress               | Semail                    | SconctactNumber |
++---------+-----------+------------+------------------------+---------------------------+-----------------+
+| 1113334 | Martin    | James      | 1600 St Catherine West | James.Martin@concordia.ca | 5148482424      |
+| 2223334 | Messi     | Leo        | 600 St Catherine West  | leo.messi@concordia.ca    | 5148482626      |
+| 3335533 | Pique     | Gerard     | 333 Laval              | Gerard.Pique@Barcelona.ca | 5148482633      |
+| 4431322 | Peter     | Vargas     | 4678 Rue Berri         | PVARGAS@hotmail.com       | 6501212004      |
+| 4433321 | Neena     | Kochhar    | 200 St catherine       | NKOCHHAR@hotmail.com      | 5151234568      |
+| 4443322 | Bruce     | Ernst      |  500 St Denis          | BERNST@gmail.com          | 5904234568      |
+| 4443329 | Steven    | King       | 180 Berri              | SKING@gmail.com           | 5151234567      |
+| 4443622 | Diana     | Lorentz    |  6600 Rue              | DLORENTZ@gmail.com        | 5904235567      |
+| 4445322 | Alexander | Hunold     |  3000 Duluth           | AHUNOLD@aol.com           | 5904234567      |
+| 4446322 | Kevin     | Mourgos    | 550 Here               | KMOURGOS@gmail.com        | 6501235234      |
+| 4447322 | Trenna    | Rajs       | 6700 There av          | TRAJS@hotmail.com         | 6501218009      |
+| 4483322 | Curtis    | Davies     | 4500 OverThere Av.     | CDAVIES@hotmail.com       | 6501212994      |
+| 4493322 | Randall   | Matos      |  4389 Jamaica St       | RMATOS@hotmail.com        | 6501212874      |
+| 9993339 | Suarez    | Luis       | 300 St Denis           | Luis.Suarez@Barcelona.ca  | 5148482699      |
++---------+-----------+------------+------------------------+---------------------------+-----------------+
+14 rows in set (0.00 sec)
+
+mysql> select *
+    -> from teachers;
++---------+-----------+------------+--------------------------+------------------------------+----------------+
+| Eid     | TlastName | TfirstName | Taddress                 | Temail                       | TcontactNumber |
++---------+-----------+------------+--------------------------+------------------------------+----------------+
+| 0023456 | Messina   | Carlos     | 1250 De Maisonneuve West | Carlos.Messina@concordia.ca  | 5148482425     |
+| 0035070 | Brown     | Charles    | 450 St Catherine West    | Charles.Brown@concordia.ca   | 4508483030     |
+| 0044777 | Martino   | Gerrard    | 7300 Berri               | Gerrard.Martino@concordia.ca | 5144459988     |
+| 0058077 | White     | Ronnie     | 11450 Laval              | Ronnie.White@concordia.ca    | 4503308888     |
+| 0065079 | Romano    | Gino       | 6500 St Laurent          | Romano.Gino@concordia.ca     | 5147330990     |
++---------+-----------+------------+--------------------------+------------------------------+----------------+
+5 rows in set (0.00 sec)
+
+mysql> select *
+    -> from coursesoffered;
++---------+----------+------------+-----------+------------+------------+-----------+---------+
+| Cid     | Csection | Cterm      | CstarTime | CStartDate | CendDate   | Clocation | Eid     |
++---------+----------+------------+-----------+------------+------------+-----------+---------+
+| CEDP150 | C1       | Spring2016 | 18:00:00  | 2016-04-05 | 2016-05-16 | FB101     | 0023456 |
+| CEPH219 | C1       | Spring2016 | 20:00:00  | 2016-04-04 | 2016-05-16 | FB105     | 0035070 |
+| CEWP215 | C1       | Spring2016 | 18:00:00  | 2016-04-04 | 2016-05-16 | FB101     | 0023456 |
++---------+----------+------------+-----------+------------+------------+-----------+---------+
+3 rows in set (0.02 sec)
+
+mysql> 
+mysql> 
+mysql> select *
+    -> from registrations;
++---------+----------+------------+---------+-------+---------------------+
+| Cid     | Csection | Cterm      | Sid     | Grade | RegDate             |
++---------+----------+------------+---------+-------+---------------------+
+| CEDP150 | C1       | Spring2016 | 3335533 | NULL  | 2016-02-18 14:10:10 |
+| CEWP215 | C1       | Spring2016 | 3335533 | NULL  | 2016-02-17 13:10:05 |
+| CEWP215 | C1       | Spring2016 | 4431322 | NULL  | 2016-05-09 20:36:32 |
+| CEWP215 | C1       | Spring2016 | 4443329 | NULL  | 2016-05-09 20:36:31 |
+| CEWP215 | C1       | Spring2016 | 4443622 | NULL  | 2016-05-09 20:36:32 |
+| CEWP215 | C1       | Spring2016 | 4445322 | NULL  | 2016-05-09 20:36:32 |
+| CEWP215 | C1       | Spring2016 | 4447322 | NULL  | 2016-05-09 20:36:32 |
++---------+----------+------------+---------+-------+---------------------+
+7 rows in set (0.00 sec)
+
+Q75. The student Diana Lorentz with id 4443622 obtained a A+ in her course. Do the update.
+
+mysql> Update Registrations
+    -> Set Grade = 'A+'
+    -> where sid = '4443622';
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *
+    -> from registrations;
++---------+----------+------------+---------+-------+---------------------+
+| Cid     | Csection | Cterm      | Sid     | Grade | RegDate             |
++---------+----------+------------+---------+-------+---------------------+
+| CEDP150 | C1       | Spring2016 | 3335533 | NULL  | 2016-02-18 14:10:10 |
+| CEWP215 | C1       | Spring2016 | 3335533 | NULL  | 2016-02-17 13:10:05 |
+| CEWP215 | C1       | Spring2016 | 4431322 | NULL  | 2016-05-09 20:36:32 |
+| CEWP215 | C1       | Spring2016 | 4443329 | NULL  | 2016-05-09 20:36:31 |
+| CEWP215 | C1       | Spring2016 | 4443622 | A+    | 2016-05-09 20:39:16 |<----------
+| CEWP215 | C1       | Spring2016 | 4445322 | NULL  | 2016-05-09 20:36:32 |
+| CEWP215 | C1       | Spring2016 | 4447322 | NULL  | 2016-05-09 20:36:32 |
++---------+----------+------------+---------+-------+---------------------+
+7 rows in set (0.00 sec)
+
+mysql> exit;
+-------------------------------------- End of File ----------------------------------------------
+------------------------ End of the course ------------------------------------------------------
+
+

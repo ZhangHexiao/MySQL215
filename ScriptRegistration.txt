@@ -1,0 +1,96 @@
+Drop Table Registrations;
+Drop Table CoursesOffered;
+Drop Table Courses;
+Drop Table Teachers;
+Drop Table Students;
+
+
+
+
+Create Table Courses
+(Cid varchar(7) Primary Key,
+ Ctitle varchar(30));
+ 
+Create Table Teachers
+(Eid varchar(7) Primary Key,
+ TlastName varchar(30),
+ TfirstName varchar(30),
+ Taddress varchar(50),
+ Temail varchar(50),
+ TcontactNumber varchar(15));
+ 
+ Create Table Students
+ (Sid varchar(7) Primary Key,
+  SlastName varchar(30),
+  SfirstName varchar(30),
+  Saddress varchar(50),
+  Semail varchar(50),
+  ScontactNumber varchar(15));
+  
+  Create Table coursesOffered
+  (Cid varchar(7),
+   Csection varchar(5),
+   Cterm varchar(10),
+   CstartTime Time,
+   CstartDate Date,
+   CendDate Date,
+   Clocation varchar(5),
+   Eid varchar(7),
+   Foreign Key (Cid) References Courses(Cid),
+   Foreign Key (Eid) References Teachers(Eid),
+   Constraint CoursesOffered_PK Primary Key(Cid,Csection,Cterm));
+   
+   Create Table Registrations
+   (Cid varchar(7),
+    Csection varchar(5),
+	Cterm Varchar(10),
+	Sid varchar(7),
+	Grade varchar(3),
+	RegDate timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	Foreign Key (Sid) References Students(Sid),
+	Foreign Key (Cid,Csection,Cterm) References CoursesOffered(Cid,Csection,Cterm),
+	Constraint Registration_PK Primary key(Cid,Csection,Cterm,Sid));
+	
+	
+	
+	Show Tables;
+	Desc  coursesOffered;
+	Desc Teachers;
+	Desc registrations;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+ 
+ 

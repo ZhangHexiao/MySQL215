@@ -1,0 +1,173 @@
+Assignment #2
+Name: Hexiao Zhang
+Student ID 40075567
+
+Q1 List the names of employees that made sales on September 23, 1987.
+
+a.Using standard syntax
+
+select concat(s.Firstname," ",s.Lastname) as Name                                                             from staff s, sales sal
+where s.staffNO = sal.staffNo AND sal.SaleDate = str_to_data('1987-09-23','%y-%m-%d');
+
+b.Using syntax 1999
+
+Select concat(s.Firstname," ",s.Lastname) as Name  
+From staff s JOIN sales sal
+ON s.staffNO = sal.staffNo
+Where sal.SaleDate = str_to_data('1987-09-23','%y-%m-%d');
+
+Q2.Display the name of McLester¡¯s supervisor
+
+a.Using standard syntax
+Select b.lastname supervisor from staff a, staff b 
+Where a.SupervisorNo = b.StaffNo
+AND a.lastname='McLester';
+
+
+ 
+Q3.Which items are part of order number 020011? 
+Display item name, and sale price
+
+a.Using standard syntax
+
+Select a.descript  items, a.saleprice price
+From inventory a, items b
+Where a.partNo=b.partNO
+And b.orderNo= '020011';
+
+
+b.Using syntax 1999
+
+Select a.descript  items, a.saleprice price
+from inventory a JOIN items b
+ON a.partNo=b.partNO
+Where b.orderNo= '020011';
+
+Q4.Display the total amount on sales and the corresponding commission of Michaels (staff name)
+
+a.Using standard syntax
+
+Select Concat( "$",format(Sum(b.Qty*a.saleprice),2)) TotalAmount, Concat( "$",format(Sum(b.Qty*a.saleprice*s.commission/100),2)) Commission
+From Inventory a, staff s, items b, sales sal
+Where a.partNo = b.partNo
+And sal.orderNo = b. orderNo
+And sal.staffNo = s.staffNo
+And s.lastname='Michaels';
+
+b.Using syntax 1999
+
+Select Concat( "$",format(Sum(b.Qty*a.saleprice),2)) TotalAmount£¬Concat( "$",format(Sum(b.Qty*a.saleprice*s.commission/100),2)) Commission
+From Inventory a JOIN items b
+ON a.partNo = b.partNo
+Join sales sal
+ON sal.orderNo = b.orderNo
+Join staff s
+ON sal.staffNo = s.staffNo
+Where s.lastname='Michaels';
+
+Q5.Display the total amount in sales made by McLester (staff last name)
+Format the result to currency and two decimal places.
+
+a.Use standard syntax
+
+Select Concat( "$",format(Sum(b.Qty*a.saleprice),2)) salesAmount
+From Inventory a, staff s, items b, sales sal
+Where a.partNo = b.partNo
+And sal.orderNo = b.orderNo
+And sal.staffNo = s.staffNo
+And s.lastname='McLester';
+
+
+b.Use syntax 1999
+
+Select Concat( "$",format(Sum(b.Qty*a.saleprice),2)) salesAmount
+From Inventory a JOIN items b
+ON a.partNo = b.partNo
+JOIN sales sal
+ON sal.orderNo = b.orderNo
+JOIN staff s
+ON sal.staffNo = s.staffNo
+Where s.lastname='McLester';
+
+
+
+Q6.Find all sales done in September. Display order number, sales date and staff member name. 
+
+a.Use standard syntax
+
+Select sal.OrderNo, sal.SaleDate, s.lastname
+From staff s, sales sal
+Where sal.staffNo = s.staffNo
+And Monthname(sal.SaleDate) = 'september';
+
+
+b.Use syntax 1999
+
+Select sal.OrderNo, sal.SaleDate, s.lastname
+From staff s JOIN sales sal
+On sal.staffNo = s.staffNo
+where Monthname(sal.SaleDate) = 'september';
+
+
+Q7.Display the number of sales made by Zambini (staff last name).
+
+a.Use standard syntax
+
+Select count(b.PartNO) as ¡±Number of orders¡±,sum(b.Qty) as ¡°Number of things¡±
+From items b, sales sal, staff s
+Where b.orderNO=sal.OrderNO
+AND sal.StaffNO=s.staffNo
+AND s.lastname='Zambini'; 
+
+
+b.Use syntax 1999
+
+Select count(b.PartNO) as ¡±Number of orders¡±, sum(b.Qty)  as ¡°Number of things¡±
+From items b JOIN sales sal
+ON b.orderNO=sal.OrderNO
+JOIN staff s
+ON sal.StaffNO=s.staffNo
+Where s.lastname='Zambini';
+
+
+Q8. Create a query to calculate all purchases of customer number 000019. The output of this query should be order number, part number, part description, quantity, sale price, and total amount per Item (Format the result to currency and two decimal places). 
+
+a.Use standard syntax
+
+Select sal.orderNo OrderNO, b.partNo PartNo, a.Descript Description, b.Qty Quantity, Concat(¡°$¡±,format(a.saleprice,2)) Saleprice, concat(¡°$¡±,format(b.Qty*a.saleprice,2)) TotalAmount
+From Inventory a, staff s, items b, sales sal
+Where a.partNo = b.partNo
+And sal.orderNo = b.orderNo
+And sal.staffNo = s.staffNo
+And sal.CustNO='000019';
+
+b.Use syntax 1999
+
+Select sal.orderNo OrderNO, b.partNo PartNo, a.Descript Description, b.Qty Quantity, Concat(¡°$¡±,format(a.saleprice,2)) Saleprice, concat(¡°$¡±,format(b.Qty*a.saleprice,2)) TotalAmount
+From Inventory a JOIN items b
+ON a.partNo = b.partNo
+JOIN sales sal
+ON sal.orderNo = b.orderNo
+JOIN staff s
+ON sal.staffNo = s.staffNo
+Where sal.CustNO='000019';
+
+Q9.In the table Inventory the items that are discontinued appear under the field name DISCONTINUE with a value of 1. Write a query to find out the Customer number of those customers that have ordered items that have been discontinued.
+
+a.Use standard syntax
+
+Select Distinct(sal.CustNo) 
+From Inventory a, items b, sales sal
+Where a.partNo = b.partNo
+And sal.orderNo = b.orderNo
+And a.Discontinue= '1';
+
+b.Use syntax 1999
+
+Select Distinct(sal.CustNo) 
+From Inventory a JOIN items b
+ON a.partNo = b.partNo
+Join sales sal
+ON sal.orderNo = b.orderNo
+Where a.Discontinue= '1';
+

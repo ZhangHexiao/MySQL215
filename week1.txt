@@ -1,0 +1,319 @@
+Week 1 
+
+Sep 20, 2017 -- Summer is here
+
+==========================================================================
+List of commands
+
+To create a database
+
+mysql>Create database WedHr;
+
+To Mount a database
+
+mysql>Use WedHr;
+
+-------------------------------------------------------------------------
+Now run the script to create and populate the objects in the database
+
+- Open the script [text file from course website]
+- select [block] all the lines in the script
+- select File
+- select Copy
+
+Point the mouse [focus] on the my sql command line
+
+mysql>
+
+- Right click the mouse
+- paste operation will take place and the execution of the script will begin
+
+------------------------------------------
+
+To display the table objects created
+
+
+
+mysql> show tables;
++-------------------+
+| Tables_in_julyhr |
++-------------------+
+| countries         |
+| departments       |
+| employees         |
+| job_grades        |
+| job_history       |
+| jobs              |
+| locations         |
+| regions           |
++-------------------+
+8 rows in set (0.33 sec)
+
+To display the table objects structure
+
+mysql> describe countries;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| Country_Id   | char(2)      | NO   | PRI | NULL    |       |
+| Country_Name | varchar(40)  | YES  |     | NULL    |       |
+| Region_Id    | decimal(2,0) | YES  | MUL | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+3 rows in set (0.39 sec)
+
+
+Q1. Display all the inforamtion stored about countries.
+
+mysql> select *
+    -> from countries;
++------------+--------------------------+-----------+
+| Country_Id | Country_Name             | Region_Id |
++------------+--------------------------+-----------+
+| CA         | Canada                   |         2 |
+| DE         | Germany                  |         1 |
+| UK         | United Kingdom           |         1 |
+| US         | United States of America |         2 |
++------------+--------------------------+-----------+
+4 rows in set (0.00 sec)
+
+
+Q2. Display only the country names.
+
+mysql> select country_name
+    -> from countries;
++--------------------------+
+| country_name             |
++--------------------------+
+| Canada                   |
+| Germany                  |
+| United Kingdom           |
+| United States of America |
++--------------------------+
+4 rows in set (0.00 sec)
+
+
+Q3. Same as Q2 but now using an alias for the country name
+
+mysql> select country_name Name
+    -> from countries;
++--------------------------+
+| Name                     |
++--------------------------+
+| Canada                   |
+| Germany                  |
+| United Kingdom           |
+| United States of America |
++--------------------------+
+4 rows in set (0.00 sec)
+
+mysql> describe countries;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| Country_Id   | char(2)      | NO   | PRI | NULL    |       |
+| Country_Name | varchar(40)  | YES  |     | NULL    |       |
+| Region_Id    | decimal(2,0) | YES  | MUL | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+
+Q4. Display country name and the Region id corresponding to each country.
+
+mysql> select country_name Name, region_id
+    -> from countries;
++--------------------------+-----------+
+| Name                     | region_id |
++--------------------------+-----------+
+| Canada                   |         2 |
+| Germany                  |         1 |
+| United Kingdom           |         1 |
+| United States of America |         2 |
++--------------------------+-----------+
+4 rows in set (0.00 sec)
+
+
+Q5. Same as Q5 but now using only one column output.
+
+
+mysql> Select concat(country_name, region_id) as "Country Information"
+    -> from countries;
++---------------------------+
+| Country Information       |
++---------------------------+
+| Canada2                   |
+| Germany1                  |
+| United Kingdom1           |
+| United States of America2 |
++---------------------------+
+4 rows in set (0.01 sec)
+
+mysql> Select concat(country_name,"  ",region_id) as "Country Information"
+    -> from countries;
++-----------------------------+
+| Country Information         |
++-----------------------------+
+| Canada  2                   |
+| Germany  1                  |
+| United Kingdom  1           |
+| United States of America  2 |
++-----------------------------+
+4 rows in set (0.00 sec)
+
+mysql> desc countries;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| Country_Id   | char(2)      | NO   | PRI | NULL    |       |
+| Country_Name | varchar(40)  | YES  |     | NULL    |       |
+| Region_Id    | decimal(2,0) | YES  | MUL | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+3 rows in set (0.02 sec)
+
+List of possible errors ------------------------------------------------------
+mysql> Select concat(country_name,"  ",region_i) as "Country Information"
+    -> from countries;
+ERROR 1054 (42S22): Unknown column 'region_i' in 'field list'
+
+
+Fixed  ---
+
+mysql> Select concat(country_name,"  ",region_id) as "Country Information"
+    -> from countries;
++-----------------------------+
+| Country Information         |
++-----------------------------+
+| Canada  2                   |
+| Germany  1                  |
+| United Kingdom  1           |
+| United States of America  2 |
++-----------------------------+
+4 rows in set (0.00 sec)
+
+-------
+mysql> Selet concat(country_name,"  ",region_id) as "Country Information"
+    -> from countries;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Selet concat(country_name,"  ",region_id) as "Country Information"
+from countrie' at line 1
+
+Fixed -----------
+
+mysql> Select concat(country_name,"  ",region_id) as "Country Information"
+    -> from countries;
++-----------------------------+
+| Country Information         |
++-----------------------------+
+| Canada  2                   |
+| Germany  1                  |
+| United Kingdom  1           |
+| United States of America  2 |
++-----------------------------+
+4 rows in set (0.00 sec)
+
+-------------------------------
+
+mysql> Selet concat(country_name,"  ",region_id) as "Country Information
+    "> from countries;
+    "> 
+    "> 
+    "> 
+    "> 
+    "> "
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Selet concat(country_name,"  ",region_id) as "Country Information
+from countries' at line 1
+
+
+
+
+mysql> show tables;
++-----------------+
+| Tables_in_hrwed |
++-----------------+
+| countries       |
+| departments     |
+| employees       |
+| job_grades      |
+| job_history     |
+| jobs            |
+| locations       |
+| regions         |
++-----------------+
+8 rows in set (0.00 sec)
+
+
+Q6. Display the salary of King.
+
+Look for the table that the information should be in.
+
+mysql> desc departments;
++-----------------+--------------+------+-----+---------+-------+
+| Field           | Type         | Null | Key | Default | Extra |
++-----------------+--------------+------+-----+---------+-------+
+| Department_Id   | decimal(4,0) | NO   | PRI | NULL    |       |
+| Department_Name | varchar(30)  | NO   |     | NULL    |       |
+| Manager_Id      | decimal(6,0) | YES  |     | NULL    |       |
+| Location_Id     | decimal(4,0) | YES  | MUL | NULL    |       |
++-----------------+--------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc employees;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| Employee_id    | decimal(6,0) | NO   | PRI | NULL    |       |
+| First_Name     | varchar(20)  | YES  |     | NULL    |       |
+| Last_Name      | varchar(25)  | NO   |     | NULL    |       |
+| Email          | varchar(20)  | YES  |     | NULL    |       |
+| Phone_Number   | varchar(20)  | YES  |     | NULL    |       |
+| Hire_Date      | date         | NO   |     | NULL    |       |
+| Job_Id         | varchar(10)  | YES  |     | NULL    |       |
+| Salary         | decimal(8,2) | YES  |     | NULL    |       |
+| Commission_Pct | decimal(2,2) | YES  |     | NULL    |       |
+| Manager_Id     | decimal(6,0) | YES  |     | NULL    |       |
+| Department_Id  | decimal(4,0) | YES  | MUL | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+11 rows in set (0.00 sec)
+
+mysql> select last_name Name, salary
+    -> from employees
+    -> where last_name = 'King';
++------+----------+
+| Name | salary   |
++------+----------+
+| King | 24000.00 |
++------+----------+
+1 row in set (0.00 sec)
+
+mysql> select last_name Name, salary
+    -> from employees
+    -> where last_name = 'KING';
++------+----------+
+| Name | salary   |
++------+----------+
+| King | 24000.00 |
++------+----------+
+1 row in set (0.00 sec)
+
+MySql is not case sensitive but it provides with tools to use to convert to Lower or Upper case
+mysql> select last_name Name, salary
+    -> from employees
+    -> where lower(last_name) = 'king';
++------+----------+
+| Name | salary   |
++------+----------+
+| King | 24000.00 |
++------+----------+
+1 row in set (0.00 sec)
+
+mysql> select last_name Name, salary
+    -> from employees
+    -> where upper(last_name) = 'KING';
++------+----------+
+| Name | salary   |
++------+----------+
+| King | 24000.00 |
++------+----------+
+1 row in set (0.00 sec)
+-------------------------------------------------- End of File ---------------------------------------------
+
+mysql> exit;
